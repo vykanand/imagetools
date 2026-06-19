@@ -11,14 +11,14 @@
 <meta property="og:title" content="ImageTools — Free Online Image Editor: Background Remover, Resizer & Filter">
 <meta property="og:description" content="Remove backgrounds with AI, resize images, and apply stunning filters — all free, no signup. Fast, private, and easy.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="/bg">
+<meta property="og:url" content="/remove-background">
 <meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'%3E%3Crect fill='%2305050a' width='1200' height='630'/%3E%3Ctext x='600' y='300' font-family='Inter,sans-serif' font-size='56' font-weight='800' fill='%23a29bfe' text-anchor='middle'%3EImageTools%3C/text%3E%3Ctext x='600' y='370' font-family='Inter,sans-serif' font-size='24' fill='%236b6b8a' text-anchor='middle'%3EBackground Remover • Resizer • Filters%3C/text%3E%3C/svg%3E">
 <meta property="og:site_name" content="ImageTools">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ImageTools — Free Online Image Editor">
 <meta name="twitter:description" content="Remove backgrounds with AI, resize images, apply filters. Free, no signup.">
 <meta name="twitter:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'%3E%3Crect fill='%2305050a' width='1200' height='630'/%3E%3Ctext x='600' y='300' font-family='Inter,sans-serif' font-size='56' font-weight='800' fill='%23a29bfe' text-anchor='middle'%3EImageTools%3C/text%3E%3Ctext x='600' y='370' font-family='Inter,sans-serif' font-size='24' fill='%236b6b8a' text-anchor='middle'%3EBackground Remover • Resizer • Filters%3C/text%3E%3C/svg%3E">
-<link rel="canonical" href="/bg">
+<link rel="canonical" href="/remove-background">
 <script type="application/ld+json" id="ldJson">{"@context":"https://schema.org","@type":"WebApplication","name":"ImageTools","applicationCategory":"Multimedia","operatingSystem":"All","description":"Free online image editing toolkit: remove backgrounds with AI, resize images, apply filters."}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -261,9 +261,9 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
   <div style="display:flex;align-items:center">
     <div class="logo"><div class="logo-mark">✦</div>Image<span>tools</span></div>
     <div class="nav" id="pageNav">
-      <a class="active" data-page="bg">Background</a>
-      <a data-page="resize">Resize</a>
-      <a data-page="filter">Filters</a>
+      <a class="active" data-page="remove-background">Background</a>
+      <a data-page="resize-image">Resize</a>
+      <a data-page="image-filter">Filters</a>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:0">
@@ -272,7 +272,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
   </div>
 </div>
 
-<div class="page active" id="page-bg">
+<div class="page active" id="page-remove-background">
 <div class="main">
   <div class="hero">
     <h1>Remove backgrounds.<br><span>Add anything behind.</span></h1>
@@ -358,7 +358,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 </div>
 
 <!-- ─── Page: Resize ─── -->
-<div class="page" id="page-resize">
+<div class="page" id="page-resize-image">
 <div class="main">
   <div class="hero">
     <h1>Resize images.<br><span>Scale to any size.</span></h1>
@@ -399,7 +399,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 </div>
 
 <!-- ─── Page: Filters ─── -->
-<div class="page" id="page-filter">
+<div class="page" id="page-image-filter">
 <div class="main">
   <div class="hero">
     <h1>Apply filters.<br><span>Transform with effects.</span></h1>
@@ -563,7 +563,7 @@ $('downloadBtn').onclick = () => {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  buildShareRow('bgShare', 'bg');
+  buildShareRow('bgShare', 'remove-background');
 };
 
 $('aiRemoveBtn').onclick = () => { if (originalImage) runAiRemoval(); };
@@ -1008,38 +1008,38 @@ const SHARE_PLATFORMS = [
   {id:'twitter',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>'}
 ];
 const PAGE_DESCS = {
-  bg: 'Remove backgrounds from photos instantly using AI. Free online tool — no signup required.',
-  resize: 'Resize images to any dimensions for free. Maintain aspect ratio, choose presets, download in one click.',
-  filter: 'Apply filters to your images: brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation.'
+  'remove-background': 'Remove backgrounds from photos instantly using AI. Free online tool — no signup required.',
+  'resize-image': 'Resize images to any dimensions for free. Maintain aspect ratio, choose presets, download in one click.',
+  'image-filter': 'Apply filters to your images: brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation.'
 };
 
 const BASE = window.location.origin;
 const PAGE_TITLES = {
-  bg: 'Free AI Background Remover — Remove Image Background Online | ImageTools',
-  resize: 'Free Image Resizer — Resize Photos Online Instantly | ImageTools',
-  filter: 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools'
+  'remove-background': 'Free AI Background Remover — Remove Image Background Online | ImageTools',
+  'resize-image': 'Free Image Resizer — Resize Photos Online Instantly | ImageTools',
+  'image-filter': 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools'
 };
 const PAGE_DESCS_LONG = {
-  bg: 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.',
-  resize: 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.',
-  filter: 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.'
+  'remove-background': 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.',
+  'resize-image': 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.',
+  'image-filter': 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.'
 };
 const PAGE_KEYWORDS = {
-  bg: 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker',
-  resize: 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool',
-  filter: 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online'
+  'remove-background': 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker',
+  'resize-image': 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool',
+  'image-filter': 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online'
 };
 
 function pageUrl(page) { return BASE + '/' + page; }
 function shareText(pageId) {
-  const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'bg';
-  const titles = {bg:'AI Background Remover',resize:'Image Resizer',filter:'Image Filter Editor'};
+  const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background';
+  const titles = {'remove-background':'AI Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter Editor'};
   return encodeURIComponent('Remove backgrounds, resize, and apply filters — all free! Check out ' + titles[p] + ' on ImageTools');
 }
-function shareUrl(pageId) { return encodeURIComponent(pageUrl(pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'bg')); }
+function shareUrl(pageId) { return encodeURIComponent(pageUrl(pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background')); }
 
 function shareTo(platform, pageId) {
-  const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'bg';
+  const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background';
   const txt = shareText(p), url = shareUrl(p);
   const links = {
     whatsapp: `https://wa.me/?text=${txt}%20${url}`,
@@ -1081,7 +1081,7 @@ function switchPage(page, push) {
   // Update URL with pushState (skip on popstate to avoid loop)
   if (push !== false && window.location.pathname !== '/' + page) history.pushState({page}, '', '/' + page);
   // Meta tags
-  const name = {bg:'Background Remover',resize:'Image Resizer',filter:'Image Filter'}[page] || 'ImageTools';
+  const name = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter'}[page] || 'ImageTools';
   document.title = PAGE_TITLES[page] || 'ImageTools — Free Online Image Editor';
   const setMeta = (sel, val) => { const el = document.querySelector(sel); if (el) el.content = val; };
   setMeta('meta[name="description"]', PAGE_DESCS_LONG[page]);
@@ -1106,10 +1106,10 @@ function switchPage(page, push) {
   // OG image with tool-specific text
   const ogImg = document.querySelector('meta[property="og:image"]');
   if (ogImg) {
-    const label = {bg:'Background Remover',resize:'Image Resizer',filter:'Image Filter'}[page] || 'ImageTools';
+    const label = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter'}[page] || 'ImageTools';
     ogImg.content = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"><rect fill="#05050a" width="1200" height="630"/><text x="600" y="280" font-family="Inter,sans-serif" font-size="64" font-weight="800" fill="#a29bfe" text-anchor="middle">ImageTools</text><text x="600" y="360" font-family="Inter,sans-serif" font-size="32" fill="#6c5ce7" text-anchor="middle">${label}</text><text x="600" y="410" font-family="Inter,sans-serif" font-size="20" fill="#6b6b8a" text-anchor="middle">Free • Online • No Signup</text></svg>`);
   }
-  if (page !== 'bg') { imageLoader.classList.remove('show'); aiRunning = false; }
+  if (page !== 'remove-background') { imageLoader.classList.remove('show'); aiRunning = false; }
 }
 
 // ─── Page Navigation (pushState routing) ───
@@ -1117,13 +1117,13 @@ document.querySelectorAll('#pageNav a').forEach(a => {
   a.addEventListener('click', () => switchPage(a.dataset.page));
 });
 window.addEventListener('popstate', (e) => {
-  const page = e.state?.page || window.location.pathname.replace(/^\//,'') || 'bg';
+  const page = e.state?.page || window.location.pathname.replace(/^\//,'') || 'remove-background';
   if (document.querySelector(`#page-${page}`)) switchPage(page, false);
 });
 // Init from URL path or default
 (function initPage() {
-  const path = window.location.pathname.replace(/^\//,'') || 'bg';
-  switchPage(document.querySelector(`#page-${path}`) ? path : 'bg');
+  const path = window.location.pathname.replace(/^\//,'') || 'remove-background';
+  switchPage(document.querySelector(`#page-${path}`) ? path : 'remove-background');
 })();
 
 // ─── Resize Page ───
@@ -1273,7 +1273,7 @@ $('downloadResizeBtn').onclick = () => {
   a.href = $('resizePreview').src;
   a.download = (resizeOrigName ? resizeOrigName.replace(/\.[^.]+$/,'') : 'image') + `-${w}x${h}.png`;
   a.click();
-  buildShareRow('resizeShare', 'resize');
+  buildShareRow('resizeShare', 'resize-image');
 };
 
 // ─── Filter Page ───
@@ -1358,7 +1358,7 @@ $('downloadFilterBtn').onclick = () => {
   a.href = c.toDataURL('image/png');
   a.download = (filterOrigName ? filterOrigName.replace(/\.[^.]+$/,'') : 'image') + '-' + String(Math.floor(10000 + Math.random()*90000)) + '.png';
   a.click();
-  buildShareRow('filterShare', 'filter');
+  buildShareRow('filterShare', 'image-filter');
 };
 
 // ─── Init header share ───

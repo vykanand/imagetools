@@ -213,16 +213,16 @@ app.get('/api/output/:f', (req, res) => {
 
 // ─── SEO: SPA meta injection ───
 const PAGE_SEO = {
-  bg: { title: 'Free AI Background Remover — Remove Image Background Online | ImageTools', desc: 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.', keywords: 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker' },
-  resize: { title: 'Free Image Resizer — Resize Photos Online Instantly | ImageTools', desc: 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.', keywords: 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool' },
-  filter: { title: 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools', desc: 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.', keywords: 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online' }
+  'remove-background': { title: 'Free AI Background Remover — Remove Image Background Online | ImageTools', desc: 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.', keywords: 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker' },
+  'resize-image': { title: 'Free Image Resizer — Resize Photos Online Instantly | ImageTools', desc: 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.', keywords: 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool' },
+  'image-filter': { title: 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools', desc: 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.', keywords: 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online' }
 };
-const PAGE_NAMES = { bg: 'Background Remover', resize: 'Image Resizer', filter: 'Image Filter Editor' };
+const PAGE_NAMES = { 'remove-background': 'Background Remover', 'resize-image': 'Image Resizer', 'image-filter': 'Image Filter Editor' };
 
 // SPA routes — inject SEO meta and serve index.html
-app.get(['/bg','/resize','/filter'], (req, res) => {
+app.get(['/remove-background','/resize-image','/image-filter'], (req, res) => {
   const page = req.path.slice(1);
-  const s = PAGE_SEO[page] || PAGE_SEO.bg;
+  const s = PAGE_SEO[page] || PAGE_SEO['remove-background'];
   const base = req.protocol + '://' + req.get('host');
   const fp = path.join(__dirname, 'public', 'index.html');
   if (!fs.existsSync(fp)) return res.status(404).end();
@@ -246,8 +246,8 @@ app.get('/robots.txt', (req, res) => {
 // Sitemap.xml
 app.get('/sitemap.xml', (req, res) => {
   const host = req.protocol + '://' + req.get('host');
-  const pages = ['bg','resize','filter'];
-  const urls = pages.map(p => `  <url><loc>${host}/${p}</loc><changefreq>weekly</changefreq><priority>${p === 'bg' ? '1.0' : '0.8'}</priority></url>`).join('\n');
+  const pages = ['remove-background','resize-image','image-filter'];
+  const urls = pages.map(p => `  <url><loc>${host}/${p}</loc><changefreq>weekly</changefreq><priority>${p === 'remove-background' ? '1.0' : '0.8'}</priority></url>`).join('\n');
   res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`);
 });
 
