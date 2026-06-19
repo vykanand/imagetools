@@ -519,7 +519,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
         <div class="image-loader" id="selfieLoader"><div class="spinner"></div><p>Applying filter…</p></div>
       </div>
       <div class="info-row" id="selfieInfo"></div>
-      <div id="selfiePresets"></div>
+      <div class="camera-filters" id="selfiePresets"></div>
       <div class="loading" id="selfieLoading" style="margin-top:10px"><div class="spinner"></div><span>Applying filter…</span></div>
       <div class="actions" style="margin-top:6px">
         <button class="btn btn-outline" id="selfieNewBtn">New Image</button>
@@ -1847,20 +1847,56 @@ $('downloadBlurBtn').onclick = () => {
 
 // ─── Selfie Filter Page ───
 const SELFIE_PRESETS = [
-  {id:'glow',label:'Glow',icon:'✨',desc:'Bright & soft glow'},
-  {id:'warm',label:'Warm',icon:'🌅',desc:'Warm golden tones'},
-  {id:'vintage',label:'Vintage',icon:'📷',desc:'Classic sepia look'},
-  {id:'bw-classic',label:'B&W',icon:'⚫',desc:'High contrast mono'},
-  {id:'soft-glam',label:'Soft',icon:'🌸',desc:'Soft & dreamy'},
-  {id:'vivid',label:'Vivid',icon:'🌈',desc:'Bold & vibrant'},
-  {id:'cool',label:'Cool',icon:'❄️',desc:'Cool blue tones'},
-  {id:'dramatic',label:'Dramatic',icon:'🎬',desc:'Dark & moody'}
+  {id:'glow',label:'Glow',desc:'Bright & soft glow'},
+  {id:'warm',label:'Warm',desc:'Warm golden tones'},
+  {id:'vintage',label:'Vintage',desc:'Classic sepia look'},
+  {id:'bw-classic',label:'B&W',desc:'High contrast mono'},
+  {id:'soft-glam',label:'Soft',desc:'Soft & dreamy'},
+  {id:'vivid',label:'Vivid',desc:'Bold & vibrant'},
+  {id:'cool',label:'Cool',desc:'Cool blue tones'},
+  {id:'dramatic',label:'Dramatic',desc:'Dark & moody'}
 ];
-let selfieOrigImg = null, selfieOrigName = '', selfiePresetActive = null;
+const SELFIE_PREVIEW_CSS = {
+  glow:'brightness(110%) contrast(108%) saturate(105%)',
+  warm:'sepia(20%) brightness(105%) saturate(110%) hue-rotate(340deg)',
+  vintage:'sepia(50%) contrast(110%) brightness(95%)',
+  'bw-classic':'grayscale(100%) contrast(115%)',
+  'soft-glam':'brightness(108%) contrast(95%) saturate(90%) blur(0.3px)',
+  vivid:'saturate(150%) contrast(110%) brightness(105%)',
+  cool:'hue-rotate(200deg) saturate(80%) brightness(105%)',
+  dramatic:'contrast(130%) brightness(90%) saturate(110%)'
+};
+let selfieOrigImg = null, selfieOrigName = '', selfiePresetActive = null, selfieFilterPreviews = null;
 $('selfieFileInput').onchange = e => { if (e.target.files[0]) loadSelfieImg(e.target.files[0]); };
 $('selfieZone').addEventListener('dragover', e => { e.preventDefault(); $('selfieZone').classList.add('dragover'); });
 $('selfieZone').addEventListener('dragleave', () => $('selfieZone').classList.remove('dragover'));
 $('selfieZone').addEventListener('drop', e => { e.preventDefault(); $('selfieZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadSelfieImg(e.dataTransfer.files[0]); });
+
+function generateSelfieFilterPreviews() {
+  if (selfieFilterPreviews) return;
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = 120; c.height = 120;
+    const cx = c.getContext('2d');
+    const s = Math.min(img.naturalWidth, img.naturalHeight);
+    cx.drawImage(img, (img.naturalWidth-s)/2, (img.naturalHeight-s)/2, s, s, 0, 0, 120, 120);
+    selfieFilterPreviews = SELFIE_PRESETS.map(p => {
+      const off = document.createElement('canvas'); off.width = 120; off.height = 120;
+      const ox = off.getContext('2d'); ox.drawImage(c, 0, 0);
+      const css = SELFIE_PREVIEW_CSS[p.id];
+      if (css) { ox.filter = css; ox.drawImage(off, 0, 0); ox.filter = 'none'; }
+      return off.toDataURL();
+    });
+    // Build presets if image already loaded
+    if (selfieOrigImg && document.querySelector('#selfiePresets').children.length === 0) buildSelfiePresets();
+  };
+  img.onerror = () => {
+    // Fallback gradient
+    selfieFilterPreviews = SELFIE_PRESETS.map(() => '');
+  };
+  img.src = 'filterpreview.jpg';
+}
 
 function loadSelfieImg(file) {
   if (!file.type.startsWith('image/')) return toast('Please select an image','error');
@@ -1874,8 +1910,8 @@ function loadSelfieImg(file) {
       $('selfieDisplay').style.display = 'flex';
       $('selfieZone').classList.add('has-result');
       $('selfieInfo').innerHTML = `<span>${img.naturalWidth}×${img.naturalHeight}px</span>`;
-      buildSelfiePresets();
-      // Auto-apply first preset
+      if (!selfieFilterPreviews) { generateSelfieFilterPreviews(); setTimeout(buildSelfiePresets, 500); }
+      else buildSelfiePresets();
       applySelfiePreset(SELFIE_PRESETS[0].id);
     };
     img.src = e.target.result;
@@ -1892,18 +1928,16 @@ $('selfieNewBtn').onclick = () => {
 
 function buildSelfiePresets() {
   const c = $('selfiePresets');
+  if (c.children.length) return;
   c.innerHTML = '';
-  c.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px';
-  SELFIE_PRESETS.forEach(p => {
-    const b = document.createElement('button');
-    b.className = 'btn';
-    b.dataset.preset = p.id;
-    b.innerHTML = `<div style="font-size:20px;margin-bottom:2px">${p.icon}</div><div style="font-size:12px;font-weight:600">${p.label}</div><div style="font-size:10px;color:var(--text-muted);font-weight:400">${p.desc}</div>`;
-    b.style.cssText = 'flex-direction:column;padding:10px 6px;height:auto;min-height:70px;text-align:center';
-    b.onclick = () => applySelfiePreset(p.id);
-    c.appendChild(b);
+  SELFIE_PRESETS.forEach((p,i) => {
+    const item = document.createElement('div');
+    item.className = 'camera-filter-item' + (i===0?' active':'');
+    const thumbSrc = (selfieFilterPreviews && selfieFilterPreviews[i]) ? selfieFilterPreviews[i] : '';
+    item.innerHTML = `<div class="camera-filter-thumb">${thumbSrc ? '<img src="'+thumbSrc+'" alt="'+p.label+'">' : '<div style="width:100%;height:100%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px">✦</div>'}</div><div class="camera-filter-name">${p.label}</div>`;
+    item.onclick = () => applySelfiePreset(p.id);
+    c.appendChild(item);
   });
-  c.querySelector('button').classList.add('btn-primary');
 }
 
 let selfieLoadCounter = 0;
@@ -1911,10 +1945,14 @@ function applySelfiePreset(id) {
   if (!selfieOrigImg) return;
   selfiePresetActive = id;
   const tag = ++selfieLoadCounter;
-  // Highlight active
-  document.querySelectorAll('#selfiePresets button').forEach(b => {
-    b.className = 'btn';
-    if (b.dataset.preset === id) b.classList.add('btn-primary');
+  document.querySelectorAll('#selfiePresets .camera-filter-item').forEach(el => {
+    const idx = SELFIE_PRESETS.findIndex(p => p.id === el.onclick ? el.dataset.preset : null);
+    el.classList.toggle('active', SELFIE_PRESETS.findIndex(p => p.id === id) === [...el.parentElement.children].indexOf(el));
+  });
+  // Actually highlight properly
+  document.querySelectorAll('#selfiePresets .camera-filter-item').forEach(el => {
+    const idx = [...el.parentElement.children].indexOf(el);
+    el.classList.toggle('active', SELFIE_PRESETS[idx]?.id === id);
   });
   const ld = $('selfieLoading'); ld.classList.add('show');
   const c = document.createElement('canvas');
@@ -2045,7 +2083,7 @@ $('uploaderClearBtn').onclick = () => { uploaderHistory = []; localStorage.remov
 renderUploaderList();
 
 // ─── Online Camera Page ───
-let cameraStream = null, cameraFacing = 'user', cameraFilterIdx = 0, cameraCaptured = null, cameraFilterPreviews = null;
+let cameraStream = null, cameraFacing = 'user', cameraFilterIdx = 0, cameraCaptured = null, cameraFilterPreviews = null, cameraFilterPreviewsPromise = null;
 const CAMERA_FILTERS = [
   {name:'Normal',css:'',desc:'No filter'},
   {name:'Clarendon',css:'brightness(110%) contrast(115%) saturate(120%)',desc:'Bright & bold'},
@@ -2065,49 +2103,51 @@ const CAMERA_FILTERS = [
   {name:'Earlybird',css:'brightness(100%) contrast(90%) saturate(80%) sepia(30%) hue-rotate(350deg)',desc:'Antique tone'}
 ];
 
-function generateFilterPreviews() {
-  const c = document.createElement('canvas');
-  c.width = 120; c.height = 120;
-  const cx = c.getContext('2d');
-  // Draw a simple face illustration for preview thumbnails
-  cx.fillStyle = '#d4a574'; cx.beginPath(); cx.arc(60,55,38,0,Math.PI*2); cx.fill(); // head
-  cx.fillStyle = '#c4956a'; cx.beginPath(); cx.arc(60,55,38,0,Math.PI); cx.fill(); // jaw shadow
-  cx.fillStyle = '#8b6b4a'; cx.beginPath(); cx.arc(60,68,18,0,Math.PI*2); cx.fill(); // mouth area
-  cx.fillStyle = '#e8c4a0'; cx.beginPath(); cx.arc(60,55,38,0,Math.PI*2); cx.fill(); // skin
-  // Eyes
-  cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(46,48,8,0,Math.PI*2); cx.fill(); cx.beginPath(); cx.arc(74,48,8,0,Math.PI*2); cx.fill();
-  cx.fillStyle = '#3d2b1f'; cx.beginPath(); cx.arc(46,48,4,0,Math.PI*2); cx.fill(); cx.beginPath(); cx.arc(74,48,4,0,Math.PI*2); cx.fill();
-  // Eyebrows
-  cx.strokeStyle = '#5c4033'; cx.lineWidth=2.5; cx.beginPath(); cx.moveTo(36,38); cx.lineTo(56,40); cx.stroke(); cx.beginPath(); cx.moveTo(84,38); cx.lineTo(64,40); cx.stroke();
-  // Nose
-  cx.fillStyle = '#c4956a'; cx.beginPath(); cx.ellipse(60,60,4,6,0,0,Math.PI*2); cx.fill();
-  // Mouth (smile)
-  cx.strokeStyle = '#b5656b'; cx.lineWidth=2.5; cx.beginPath(); cx.arc(60,65,12,0.1*Math.PI,0.9*Math.PI); cx.stroke();
-  // Hair
-  cx.fillStyle = '#3d2b1f'; cx.beginPath(); cx.arc(60,28,36,Math.PI*1.1,Math.PI*1.9); cx.fill();
-  // Shoulders
-  cx.fillStyle = '#4a6fa5'; cx.beginPath(); cx.moveTo(10,105); cx.lineTo(30,80); cx.lineTo(90,80); cx.lineTo(110,105); cx.closePath(); cx.fill();
-  // Background gradient
-  const grad = cx.createLinearGradient(0,0,120,120);
-  grad.addColorStop(0,'#667eea'); grad.addColorStop(1,'#764ba2');
-  cx.fillStyle = grad; cx.fillRect(0,0,120,20);
-  cx.fillRect(0,100,120,20);
-  // Generate filtered thumbnails
-  cameraFilterPreviews = CAMERA_FILTERS.map(f => {
-    const off = document.createElement('canvas');
-    off.width = 120; off.height = 120;
-    const ox = off.getContext('2d');
-    ox.drawImage(c, 0, 0);
-    if (f.css) { ox.filter = f.css; ox.drawImage(off, 0, 0); ox.filter = 'none'; }
-    return off.toDataURL();
+function generateFilterPreviews(src) {
+  if (cameraFilterPreviews) return Promise.resolve();
+  if (cameraFilterPreviewsPromise) return cameraFilterPreviewsPromise;
+  cameraFilterPreviewsPromise = new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = 120; c.height = 120;
+      const cx = c.getContext('2d');
+      const s = Math.min(img.naturalWidth, img.naturalHeight);
+      cx.drawImage(img, (img.naturalWidth-s)/2, (img.naturalHeight-s)/2, s, s, 0, 0, 120, 120);
+      cameraFilterPreviews = CAMERA_FILTERS.map(f => {
+        const off = document.createElement('canvas');
+        off.width = 120; off.height = 120;
+        const ox = off.getContext('2d');
+        ox.drawImage(c, 0, 0);
+        if (f.css) { ox.filter = f.css; ox.drawImage(off, 0, 0); ox.filter = 'none'; }
+        return off.toDataURL();
+      });
+      resolve();
+    };
+    img.onerror = () => {
+      // Fallback gradient
+      const c = document.createElement('canvas'); c.width = 120; c.height = 120;
+      const cx = c.getContext('2d');
+      const g = cx.createLinearGradient(0,0,120,120); g.addColorStop(0,'#667eea'); g.addColorStop(1,'#764ba2');
+      cx.fillStyle = g; cx.fillRect(0,0,120,120);
+      cameraFilterPreviews = CAMERA_FILTERS.map(f => {
+        const off = document.createElement('canvas'); off.width = 120; off.height = 120;
+        const ox = off.getContext('2d'); ox.drawImage(c, 0, 0);
+        if (f.css) { ox.filter = f.css; ox.drawImage(off, 0, 0); ox.filter = 'none'; }
+        return off.toDataURL();
+      });
+      resolve();
+    };
+    img.src = src || 'filterpreview.jpg';
   });
+  return cameraFilterPreviewsPromise;
 }
 
 $('cameraStartBtn').onclick = startCamera;
 
-function startCamera() {
+async function startCamera() {
   if (!navigator.mediaDevices?.getUserMedia) { toast('Camera not supported','error'); return; }
-  if (!cameraFilterPreviews) generateFilterPreviews();
+  await generateFilterPreviews();
   buildCameraFilters();
   $('cameraPlaceholder').style.display = 'none';
   $('cameraControls').style.display = '';
