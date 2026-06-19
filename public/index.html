@@ -234,7 +234,6 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 
       <div class="compose-preview" id="composePreview" style="display:none;margin-top:12px;position:relative">
         <canvas id="previewCanvas" style="width:100%;border-radius:var(--radius);display:block;cursor:default;background:var(--card)"></canvas>
-        <input type="color" id="canvasColorTrigger" style="position:absolute;width:0;height:0;padding:0;border:0;visibility:hidden" tabindex="-1">
       </div>
 
       <div class="actions">
@@ -668,6 +667,7 @@ function renderCompose() {
     ctx.setLineDash([5,5]); ctx.strokeRect(bbX,bbY,bbW,bbH); ctx.setLineDash([]);
 
     // Text fill
+    ctx.fillStyle = cp.textColor;
     lines.forEach((l,i) => ctx.fillText(l,0,(i-(lines.length-1)/2)*lh));
 
     // Color badge (top-right corner)
@@ -733,10 +733,7 @@ $('previewCanvas').addEventListener('mousedown', e => {
 
   // Color badge at (bbW/2+12, -bbH/2+12) in local
   if (dist(local.x, local.y, bbW/2+12, -bbH/2+12) < 16) {
-    const ct = $('canvasColorTrigger');
-    ct.value = cp.textColor;
-    ct.oninput = () => { cp.textColor = ct.value; $('textColor').value = ct.value; $('textColorHex').value = ct.value; renderCompose(); };
-    ct.click(); return;
+    $('textColor').click(); return;
   }
   // Rotation handle at (0, -bbH/2-14) in local
   if (dist(local.x, local.y, 0, -bbH/2-14) < 14) { cpMode = 'rotate'; return; }

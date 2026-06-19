@@ -190,7 +190,7 @@ app.post('/api/compose', auth, (req, res, next) => {
       }
 
       const scaled = tmp.clone().resize({ w: Math.round(maxLineW * tSize / closest + 20), h: Math.round(textH * tSize / closest + 20) });
-      if (textRotation) scaled.rotate(parseFloat(textRotation));
+      if (textRotation) scaled.rotate(parseFloat(textRotation), 0x00000000);
       const tcX = Math.round(w / 2 + (parseInt(textX) || 0) - scaled.bitmap.width / 2);
       const tcY = Math.round(h / 2 + (parseInt(textY) || 0) - scaled.bitmap.height / 2);
       bgImg.composite(scaled, Math.max(0, tcX), Math.max(0, tcY));
