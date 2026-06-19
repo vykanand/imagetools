@@ -1,5 +1,25 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Generated uploads/outputs
 uploads/
 output/
-users.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# Environment
 .env
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# Test images (root only)
+*.jpg
+*.png
