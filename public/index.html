@@ -266,6 +266,8 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       <a data-page="selfie-filter">Selfie</a>
       <a data-page="resize-image">Resize</a>
       <a data-page="image-filter">Filters</a>
+      <a data-page="image-uploader">Upload</a>
+      <a data-page="api-documentation">API</a>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:0">
@@ -498,6 +500,210 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
         <button class="btn btn-success" id="downloadSelfieBtn">Download</button>
       </div>
       <div class="share-row" id="selfieShare" style="display:none"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ─── Page: Image Uploader ─── -->
+<div class="page" id="page-image-uploader">
+<div class="main">
+  <div class="hero">
+    <h1>Upload images.<br><span>Get shareable links.</span></h1>
+    <p>Upload images and get instant shareable URLs. Drag and drop, copy links, all free.</p>
+  </div>
+  <div class="upload-zone" id="uploaderZone">
+    <input type="file" id="uploaderFileInput" accept="image/*" multiple>
+    <div class="upload-placeholder">
+      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <h3>Drop images here</h3>
+      <p>JPG, PNG, WebP &bull; Up to 20 MB each</p>
+    </div>
+    <div class="image-display" id="uploaderDisplay" style="display:none">
+      <div class="loading" id="uploaderLoading"><div class="spinner"></div><span>Uploading…</span></div>
+      <div id="uploaderList"></div>
+      <div style="margin-top:14px">
+        <button class="btn btn-outline" id="uploaderNewBtn">Upload More</button>
+        <button class="btn btn-ghost" id="uploaderClearBtn">Clear History</button>
+      </div>
+      <div class="share-row" id="uploaderShare" style="display:none"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ─── Page: API Documentation ─── -->
+<div class="page" id="page-api-documentation">
+<div class="main">
+  <div class="hero">
+    <h1>API Documentation.<br><span>Integrate ImageTools.</span></h1>
+    <p>RESTful API for background removal, image resizing, filters, and more.</p>
+  </div>
+  <div class="api-section" id="apiContent" style="font-size:14px;line-height:1.7">
+    <p style="color:var(--text-muted);margin-bottom:24px">Base URL: <code style="background:var(--bg);padding:2px 8px;border-radius:4px;color:var(--accent-glow)">http://your-host:5001</code></p>
+
+    <div class="api-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="background:var(--accent);color:#fff;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700">AUTH</span>
+        <code style="font-size:13px;color:var(--text)">POST /api/auth/signup</code>
+      </div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Create a new user account.</p>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Body (JSON):</div>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">{ "email": "user@example.com", "password": "yourpassword", "name": "Optional Name" }</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/auth/signup -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"pass123"}'</pre>
+      </div>
+    </div>
+
+    <div class="api-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="background:var(--accent);color:#fff;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700">AUTH</span>
+        <code style="font-size:13px;color:var(--text)">POST /api/auth/login</code>
+      </div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Log in and receive a JWT token.</p>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Body (JSON):</div>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">{ "email": "user@example.com", "password": "yourpassword" }</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Response:</div>
+        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "token": "jwt...", "user": { "email": "...", "name": "..." } }</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/auth/login -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"pass123"}'</pre>
+      </div>
+    </div>
+
+    <div class="api-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="background:#00d68f;color:#05050a;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700">FREE</span>
+        <code style="font-size:13px;color:var(--text)">POST /api/remove-bg</code>
+      </div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Remove background from an image using AI (silueta model). Returns a transparent PNG.</p>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Parameters (multipart/form-data):</div>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">image: (file) Image to process — JPG, PNG, WebP (max 20MB)</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Response:</div>
+        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "uuid", "url": "/api/output/uuid.png" }</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/remove-bg -F "image=@photo.jpg"</pre>
+      </div>
+    </div>
+
+    <div class="api-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="background:#00d68f;color:#05050a;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700">FREE</span>
+        <code style="font-size:13px;color:var(--text)">POST /api/background-blur</code>
+      </div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Blur the background of an image while keeping the subject sharp. Uses AI subject detection.</p>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Parameters (multipart/form-data):</div>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">image: (file) Image to process<br>blurRadius: (int) 1–30, default 10</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Response:</div>
+        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "uuid", "url": "/api/output/uuid.png" }</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/background-blur -F "image=@photo.jpg" -F "blurRadius=15"</pre>
+      </div>
+    </div>
+
+    <div class="api-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="background:#00d68f;color:#05050a;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700">FREE</span>
+        <code style="font-size:13px;color:var(--text)">POST /api/selfie-filter</code>
+      </div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Apply filter presets to images. Available presets: glow, warm, vintage, bw-classic, soft-glam, vivid, cool, dramatic.</p>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Parameters (multipart/form-data):</div>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">image: (file) Image to process<br>preset: (string) One of: glow, warm, vintage, bw-classic, soft-glam, vivid, cool, dramatic</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Response:</div>
+        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "uuid", "url": "/api/output/uuid.png" }</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/selfie-filter -F "image=@selfie.jpg" -F "preset=vivid"</pre>
+      </div>
+    </div>
+
+    <div class="api-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="background:var(--accent);color:#fff;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700">AUTH</span>
+        <code style="font-size:13px;color:var(--text)">POST /api/compose</code>
+      </div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Compose a foreground (transparent PNG) over a background with text overlay. Requires JWT authentication.</p>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Parameters (JSON or multipart):</div>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">foregroundId: (string) ID from /api/remove-bg output<br>bgType: "solid" | "gradient" | "url"<br>bgColor: hex color (for solid)<br>gradientColors: JSON array of hex colors<br>text: overlay text (optional)<br>textColor, textSize, textRotation, textX, textY</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/compose -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" -d '{"foregroundId":"uuid","bgType":"gradient","gradientColors":["#ff7e5f","#feb47b"],"text":"Hello"}'</pre>
+      </div>
+    </div>
+
+    <div class="api-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="background:#00d68f;color:#05050a;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700">FREE</span>
+        <code style="font-size:13px;color:var(--text)">POST /api/store-image</code>
+      </div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Upload an image and get a shareable URL. Files are stored server-side for 24 hours.</p>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Parameters (multipart/form-data):</div>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">image: (file) Any image format (max 20MB)</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Response:</div>
+        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "uuid", "url": "/api/output/uuid.png" }</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/store-image -F "image=@photo.jpg"</pre>
+      </div>
+    </div>
+
+    <div class="api-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="background:#00d68f;color:#05050a;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700">FREE</span>
+        <code style="font-size:13px;color:var(--text)">GET /api/output/:filename</code>
+      </div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Retrieve a processed image by filename. Used to access results from any API endpoint.</p>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Parameter:</div>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">filename: (string) e.g. "uuid.png"</pre>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl http://localhost:5001/api/output/uuid.png --output result.png</pre>
+      </div>
+    </div>
+
+    <div class="api-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="background:#00d68f;color:#05050a;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700">FREE</span>
+        <code style="font-size:13px;color:var(--text)">GET /api/auth/me</code>
+      </div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Get current authenticated user info. Requires JWT token in Authorization header.</p>
+      <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
+        <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl http://localhost:5001/api/auth/me -H "Authorization: Bearer TOKEN"</pre>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;border-top:1px solid var(--border);margin-top:24px">
+      All API endpoints return JSON. Authentication required endpoints return 401 if token is missing or invalid.
     </div>
   </div>
 </div>
@@ -1089,7 +1295,9 @@ const PAGE_DESCS = {
   'resize-image': 'Resize images to any dimensions for free. Maintain aspect ratio, choose presets, download in one click.',
   'image-filter': 'Apply filters to your images: brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation.',
   'background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create portrait mode effects instantly.',
-  'selfie-filter': 'Apply stunning filter presets to your selfies: glow, vintage, B&W, vivid, and more.'
+  'selfie-filter': 'Apply stunning filter presets to your selfies: glow, vintage, B&W, vivid, and more.',
+  'image-uploader': 'Upload images and get instant shareable URLs for free. Drag and drop, copy links, manage uploads.',
+  'api-documentation': 'Complete API documentation for ImageTools. Background removal, image processing, and more.'
 };
 
 const BASE = window.location.origin;
@@ -1098,27 +1306,33 @@ const PAGE_TITLES = {
   'resize-image': 'Free Image Resizer — Resize Photos Online Instantly | ImageTools',
   'image-filter': 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools',
   'background-blur': 'Free Background Blur Tool — Blur Photo Background Online | ImageTools',
-  'selfie-filter': 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageTools'
+  'selfie-filter': 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageTools',
+  'image-uploader': 'Free Image Uploader — Upload & Share Images Online | ImageTools',
+  'api-documentation': 'ImageTools API Documentation — Developer Guide | ImageTools'
 };
 const PAGE_DESCS_LONG = {
   'remove-background': 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.',
   'resize-image': 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.',
   'image-filter': 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.',
   'background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create beautiful portrait mode effects online for free. Adjustable blur intensity, instant download. No signup required.',
-  'selfie-filter': 'Apply stunning selfie filter presets to your photos online for free. Glow, vintage, B&W, vivid and more. One-click download, no signup required.'
+  'selfie-filter': 'Apply stunning selfie filter presets to your photos online for free. Glow, vintage, B&W, vivid and more. One-click download, no signup required.',
+  'image-uploader': 'Upload images and get instant shareable URLs for free. Drag-and-drop upload, copy links, manage uploads. Fast, private, no signup required.',
+  'api-documentation': 'Complete API documentation for ImageTools. Background removal, image resizing, filters, and more. Integrate AI image processing into your apps with simple REST endpoints.'
 };
 const PAGE_KEYWORDS = {
   'remove-background': 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker',
   'resize-image': 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool',
   'image-filter': 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online',
   'background-blur': 'background blur, blur photo background, portrait mode, AI subject detection, blur background online',
-  'selfie-filter': 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online, photo editor'
+  'selfie-filter': 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online, photo editor',
+  'image-uploader': 'image uploader, upload photos online, image hosting, share image link, drag and drop upload',
+  'api-documentation': 'API documentation, image processing API, background removal API, developer guide, REST API'
 };
 
 function pageUrl(page) { return BASE + '/' + page; }
 function shareText(pageId) {
   const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background';
-  const titles = {'remove-background':'AI Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter Editor','background-blur':'Background Blur','selfie-filter':'Selfie Filter'};
+  const titles = {'remove-background':'AI Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter Editor','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','api-documentation':'API Documentation'};
   return encodeURIComponent('Remove backgrounds, blur, resize, and apply filters — all free! Check out ' + titles[p] + ' on ImageTools');
 }
 function shareUrl(pageId) { return encodeURIComponent(pageUrl(pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background')); }
@@ -1166,7 +1380,7 @@ function switchPage(page, push) {
   // Update URL with pushState (skip on popstate to avoid loop)
   if (push !== false && window.location.pathname !== '/' + page) history.pushState({page}, '', '/' + page);
   // Meta tags
-  const name = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter'}[page] || 'ImageTools';
+  const name = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','api-documentation':'API Documentation'}[page] || 'ImageTools';
   document.title = PAGE_TITLES[page] || 'ImageTools — Free Online Image Editor';
   const setMeta = (sel, val) => { const el = document.querySelector(sel); if (el) el.content = val; };
   setMeta('meta[name="description"]', PAGE_DESCS_LONG[page]);
@@ -1191,7 +1405,7 @@ function switchPage(page, push) {
   // OG image with tool-specific text
   const ogImg = document.querySelector('meta[property="og:image"]');
   if (ogImg) {
-    const label = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter'}[page] || 'ImageTools';
+    const label = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','api-documentation':'API Documentation'}[page] || 'ImageTools';
     ogImg.content = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"><rect fill="#05050a" width="1200" height="630"/><text x="600" y="280" font-family="Inter,sans-serif" font-size="64" font-weight="800" fill="#a29bfe" text-anchor="middle">ImageTools</text><text x="600" y="360" font-family="Inter,sans-serif" font-size="32" fill="#6c5ce7" text-anchor="middle">${label}</text><text x="600" y="410" font-family="Inter,sans-serif" font-size="20" fill="#6b6b8a" text-anchor="middle">Free • Online • No Signup</text></svg>`);
   }
   if (page !== 'remove-background') { imageLoader.classList.remove('show'); aiRunning = false; }
@@ -1682,6 +1896,74 @@ $('downloadSelfieBtn').onclick = () => {
   a.click();
   buildShareRow('selfieShare', 'selfie-filter');
 };
+
+// ─── Image Uploader Page ───
+let uploaderHistory = JSON.parse(localStorage.getItem('uploadHistory') || '[]');
+$('uploaderFileInput').onchange = e => { if (e.target.files.length) uploadFiles(e.target.files); };
+$('uploaderZone').addEventListener('dragover', e => { e.preventDefault(); $('uploaderZone').classList.add('dragover'); });
+$('uploaderZone').addEventListener('dragleave', () => $('uploaderZone').classList.remove('dragover'));
+$('uploaderZone').addEventListener('drop', e => { e.preventDefault(); $('uploaderZone').classList.remove('dragover'); if (e.dataTransfer.files.length) uploadFiles(e.dataTransfer.files); });
+
+function uploadFiles(files) {
+  $('uploaderLoading').classList.add('show');
+  $('uploaderDisplay').style.display = 'flex';
+  $('uploaderZone').classList.add('has-result');
+  let done = 0, total = files.length;
+  for (const file of files) {
+    if (!file.type.startsWith('image/')) { done++; continue; }
+    const fd = new FormData();
+    fd.append('image', file);
+    fetch('/api/store-image', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(d => {
+        if (d.url) {
+          uploaderHistory.unshift({ url: d.url, name: file.name, time: Date.now() });
+          localStorage.setItem('uploadHistory', JSON.stringify(uploaderHistory));
+          renderUploaderList();
+        }
+      })
+      .catch(() => {})
+      .finally(() => { done++; if (done >= total) $('uploaderLoading').classList.remove('show'); });
+  }
+  if (total === 0 || done >= total) $('uploaderLoading').classList.remove('show');
+  renderUploaderList();
+}
+
+function renderUploaderList() {
+  const c = $('uploaderList');
+  if (!uploaderHistory.length) { c.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">No uploads yet</div>'; return; }
+  c.innerHTML = '<h3 style="font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Recent Uploads</h3>';
+  uploaderHistory.slice(0, 20).forEach(item => {
+    const card = document.createElement('div');
+    card.style.cssText = 'display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:8px';
+    const img = document.createElement('img');
+    img.src = item.url; img.style.cssText = 'width:40px;height:40px;border-radius:4px;object-fit:cover;background:var(--bg)';
+    card.appendChild(img);
+    const info = document.createElement('div');
+    info.style.cssText = 'flex:1;min-width:0';
+    info.innerHTML = `<div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.name}</div><div style="font-size:11px;color:var(--text-muted)">${new Date(item.time).toLocaleString()}</div>`;
+    card.appendChild(info);
+    const link = document.createElement('input');
+    link.value = window.location.origin + item.url;
+    link.readOnly = true;
+    link.style.cssText = 'flex:0 0 220px;padding:5px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:11px;font-family:inherit;outline:none';
+    link.onclick = () => link.select();
+    card.appendChild(link);
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn btn-sm btn-primary';
+    copyBtn.textContent = 'Copy';
+    copyBtn.style.cssText = 'flex:none;padding:5px 12px;font-size:11px';
+    copyBtn.onclick = () => { link.select(); navigator.clipboard.writeText(link.value).then(() => toast('Link copied!','success')); };
+    card.appendChild(copyBtn);
+    c.appendChild(card);
+  });
+}
+
+$('uploaderNewBtn').onclick = () => $('uploaderFileInput').click();
+$('uploaderClearBtn').onclick = () => { uploaderHistory = []; localStorage.removeItem('uploadHistory'); renderUploaderList(); toast('History cleared','success'); };
+
+// Init uploader list
+renderUploaderList();
 
 // ─── Init header share ───
 buildShareRow('socialHeader', null, true);
