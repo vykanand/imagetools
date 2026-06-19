@@ -239,6 +239,26 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 .s-header{display:flex;gap:4px;align-items:center;margin-right:6px}
 .s-header .sbtn{width:28px;height:28px;border-color:transparent}
 .s-header .sbtn:hover{background:var(--card-hover);border-color:var(--border)}
+.camera-viewfinder{position:relative;background:var(--card);border-radius:var(--radius);overflow:hidden;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.camera-viewfinder video{width:100%;height:100%;object-fit:contain;display:block;transform:scaleX(-1)}
+.camera-viewfinder video.mirror-off{transform:scaleX(1)}
+.camera-filter-overlay{position:absolute;inset:0;pointer-events:none;transition:filter .3s}
+.camera-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;position:absolute;inset:0;background:var(--card)}
+.camera-toolbar{display:flex;align-items:center;justify-content:center;gap:40px;padding:20px 0 8px}
+.camera-btn{width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+.camera-btn:hover{background:var(--card-hover);border-color:var(--accent);color:var(--accent)}
+.camera-capture-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+.camera-capture-btn{width:64px;height:64px;border-radius:50%;border:4px solid var(--text);background:transparent;cursor:pointer;position:relative;transition:var(--transition)}
+.camera-capture-btn::after{content:'';position:absolute;inset:5px;border-radius:50%;background:var(--text);transition:var(--transition)}
+.camera-capture-btn:hover{transform:scale(1.05)}
+.camera-capture-btn:active::after{background:var(--accent)}
+.camera-capture-btn:active{transform:scale(.95)}
+@keyframes flash{0%{opacity:.6}100%{opacity:0}}
+.camera-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:10;animation:flash .2s ease-out}
+.camera-result-img-wrap{text-align:center;margin-top:16px}
+.camera-result-img-wrap img{max-width:100%;max-height:500px;border-radius:var(--radius);display:block;margin:0 auto}
+.camera-result-actions{display:flex;gap:12px;justify-content:center;margin-top:14px}
+.camera-filter-badge{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.6);color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;backdrop-filter:blur(4px);pointer-events:none}
 @media(max-width:640px){
   .header{padding:10px 16px}
   .hero h1{font-size:26px}
@@ -267,6 +287,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       <a data-page="resize-image">Resize</a>
       <a data-page="image-filter">Filters</a>
       <a data-page="image-uploader">Upload</a>
+      <a data-page="online-camera">Camera</a>
       <a data-page="api-documentation">API</a>
     </div>
   </div>
@@ -704,6 +725,57 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 
     <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;border-top:1px solid var(--border);margin-top:24px">
       All API endpoints return JSON. Authentication required endpoints return 401 if token is missing or invalid.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ─── Page: Online Camera ─── -->
+<div class="page" id="page-online-camera">
+<div class="main">
+  <div class="hero">
+    <h1>Online Camera.<br><span>Capture from your webcam.</span></h1>
+    <p>Use your device camera to take photos. Apply filters, download, and share.</p>
+  </div>
+  <div id="cameraView">
+    <div class="camera-viewfinder" id="cameraViewfinder">
+      <video id="cameraVideo" autoplay playsinline muted></video>
+      <div class="camera-filter-overlay" id="cameraFilterOverlay"></div>
+      <div class="camera-placeholder" id="cameraPlaceholder">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="color:var(--text-dim);margin-bottom:12px"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <p style="color:var(--text-muted);font-size:14px">Camera access required</p>
+        <button class="btn btn-primary" id="cameraStartBtn" style="margin-top:12px">Start Camera</button>
+      </div>
+      <canvas id="cameraCanvas" style="display:none"></canvas>
+    </div>
+    <div id="cameraControls" style="display:none">
+      <div class="camera-toolbar">
+        <button class="camera-btn" id="cameraFlipBtn" title="Flip camera">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+        </button>
+        <div class="camera-capture-wrap">
+          <button class="camera-capture-btn" id="cameraCaptureBtn" title="Capture"></button>
+        </div>
+        <button class="camera-btn" id="cameraFilterBtn" title="Cycle filter">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 22 7 6 21 2 21 2 17 18 3"/><line x1="16" y1="5" x2="19" y2="8"/><line x1="18" y1="3" x2="21" y2="6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="cameraResult" style="display:none">
+      <div class="camera-result-img-wrap">
+        <img id="cameraResultImg" alt="Captured photo">
+        <div class="camera-result-actions">
+          <button class="btn btn-outline" id="cameraRetakeBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+            Retake
+          </button>
+          <button class="btn btn-success" id="cameraDownloadBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download
+          </button>
+        </div>
+      </div>
+      <div class="share-row" id="cameraShare" style="display:none"></div>
     </div>
   </div>
 </div>
@@ -1297,6 +1369,7 @@ const PAGE_DESCS = {
   'background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create portrait mode effects instantly.',
   'selfie-filter': 'Apply stunning filter presets to your selfies: glow, vintage, B&W, vivid, and more.',
   'image-uploader': 'Upload images and get instant shareable URLs for free. Drag and drop, copy links, manage uploads.',
+  'online-camera': 'Use your device camera to take photos online for free. Capture, apply effects, download and share.',
   'api-documentation': 'Complete API documentation for ImageTools. Background removal, image processing, and more.'
 };
 
@@ -1308,6 +1381,7 @@ const PAGE_TITLES = {
   'background-blur': 'Free Background Blur Tool — Blur Photo Background Online | ImageTools',
   'selfie-filter': 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageTools',
   'image-uploader': 'Free Image Uploader — Upload & Share Images Online | ImageTools',
+  'online-camera': 'Free Online Camera — Take Photos with Webcam | ImageTools',
   'api-documentation': 'ImageTools API Documentation — Developer Guide | ImageTools'
 };
 const PAGE_DESCS_LONG = {
@@ -1317,6 +1391,7 @@ const PAGE_DESCS_LONG = {
   'background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create beautiful portrait mode effects online for free. Adjustable blur intensity, instant download. No signup required.',
   'selfie-filter': 'Apply stunning selfie filter presets to your photos online for free. Glow, vintage, B&W, vivid and more. One-click download, no signup required.',
   'image-uploader': 'Upload images and get instant shareable URLs for free. Drag-and-drop upload, copy links, manage uploads. Fast, private, no signup required.',
+  'online-camera': 'Use your device camera to take photos online for free. Capture with webcam, apply real-time filters, download and share. No signup required, works in your browser.',
   'api-documentation': 'Complete API documentation for ImageTools. Background removal, image resizing, filters, and more. Integrate AI image processing into your apps with simple REST endpoints.'
 };
 const PAGE_KEYWORDS = {
@@ -1326,13 +1401,14 @@ const PAGE_KEYWORDS = {
   'background-blur': 'background blur, blur photo background, portrait mode, AI subject detection, blur background online',
   'selfie-filter': 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online, photo editor',
   'image-uploader': 'image uploader, upload photos online, image hosting, share image link, drag and drop upload',
+  'online-camera': 'online camera, webcam photo, take photo online, camera capture, webcam selfie, browser camera',
   'api-documentation': 'API documentation, image processing API, background removal API, developer guide, REST API'
 };
 
 function pageUrl(page) { return BASE + '/' + page; }
 function shareText(pageId) {
   const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background';
-  const titles = {'remove-background':'AI Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter Editor','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','api-documentation':'API Documentation'};
+  const titles = {'remove-background':'AI Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter Editor','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','online-camera':'Online Camera','api-documentation':'API Documentation'};
   return encodeURIComponent('Remove backgrounds, blur, resize, and apply filters — all free! Check out ' + titles[p] + ' on ImageTools');
 }
 function shareUrl(pageId) { return encodeURIComponent(pageUrl(pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background')); }
@@ -1380,7 +1456,7 @@ function switchPage(page, push) {
   // Update URL with pushState (skip on popstate to avoid loop)
   if (push !== false && window.location.pathname !== '/' + page) history.pushState({page}, '', '/' + page);
   // Meta tags
-  const name = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','api-documentation':'API Documentation'}[page] || 'ImageTools';
+  const name = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','online-camera':'Online Camera','api-documentation':'API Documentation'}[page] || 'ImageTools';
   document.title = PAGE_TITLES[page] || 'ImageTools — Free Online Image Editor';
   const setMeta = (sel, val) => { const el = document.querySelector(sel); if (el) el.content = val; };
   setMeta('meta[name="description"]', PAGE_DESCS_LONG[page]);
@@ -1405,7 +1481,7 @@ function switchPage(page, push) {
   // OG image with tool-specific text
   const ogImg = document.querySelector('meta[property="og:image"]');
   if (ogImg) {
-    const label = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','api-documentation':'API Documentation'}[page] || 'ImageTools';
+    const label = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','online-camera':'Online Camera','api-documentation':'API Documentation'}[page] || 'ImageTools';
     ogImg.content = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"><rect fill="#05050a" width="1200" height="630"/><text x="600" y="280" font-family="Inter,sans-serif" font-size="64" font-weight="800" fill="#a29bfe" text-anchor="middle">ImageTools</text><text x="600" y="360" font-family="Inter,sans-serif" font-size="32" fill="#6c5ce7" text-anchor="middle">${label}</text><text x="600" y="410" font-family="Inter,sans-serif" font-size="20" fill="#6b6b8a" text-anchor="middle">Free • Online • No Signup</text></svg>`);
   }
   if (page !== 'remove-background') { imageLoader.classList.remove('show'); aiRunning = false; }
@@ -1964,6 +2040,123 @@ $('uploaderClearBtn').onclick = () => { uploaderHistory = []; localStorage.remov
 
 // Init uploader list
 renderUploaderList();
+
+// ─── Online Camera Page ───
+let cameraStream = null, cameraFacing = 'user', cameraFilterIdx = 0;
+const CAMERA_FILTERS = [
+  {name:'Normal',css:''},
+  {name:'Warm',css:'sepia(30%) brightness(110%)'},
+  {name:'Cool',css:'hue-rotate(200deg) saturate(80%) brightness(105%)'},
+  {name:'Vintage',css:'sepia(60%) contrast(90%) brightness(90%)'},
+  {name:'B&W',css:'grayscale(100%) contrast(110%)'},
+  {name:'Vivid',css:'saturate(150%) contrast(110%) brightness(105%)'},
+  {name:'Soft',css:'brightness(110%) contrast(85%) blur(.4px)'},
+  {name:'Dramatic',css:'contrast(130%) brightness(90%) saturate(110%)'}
+];
+let cameraCaptured = null;
+
+$('cameraStartBtn').onclick = startCamera;
+
+function startCamera() {
+  if (!navigator.mediaDevices?.getUserMedia) { toast('Camera not supported in this browser','error'); return; }
+  $('cameraPlaceholder').style.display = 'none';
+  $('cameraControls').style.display = '';
+  const v = $('cameraVideo'), c = $('cameraCanvas');
+  c.style.display = 'none';
+  v.style.display = 'block';
+  stopCamera();
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: cameraFacing, width: { ideal: 1280 }, height: { ideal: 720 } } })
+    .then(s => {
+      cameraStream = s;
+      v.srcObject = s;
+      v.onloadedmetadata = () => v.play();
+      updateFilterBadge();
+    })
+    .catch(() => {
+      $('cameraPlaceholder').style.display = 'flex';
+      $('cameraControls').style.display = 'none';
+      toast('Camera access denied','error');
+    });
+}
+
+function stopCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+  $('cameraVideo').srcObject = null;
+}
+
+function applyCameraFilter(idx) {
+  cameraFilterIdx = idx;
+  const f = CAMERA_FILTERS[idx];
+  $('cameraVideo').style.filter = f.css;
+  updateFilterBadge();
+}
+function updateFilterBadge() {
+  let b = $('cameraFilterBadge');
+  if (!b) { b = document.createElement('div'); b.id = 'cameraFilterBadge'; b.className = 'camera-filter-badge'; $('cameraFilterOverlay').appendChild(b); }
+  b.textContent = CAMERA_FILTERS[cameraFilterIdx].name;
+}
+
+$('cameraFilterBtn').onclick = () => applyCameraFilter((cameraFilterIdx + 1) % CAMERA_FILTERS.length);
+
+$('cameraFlipBtn').onclick = () => {
+  cameraFacing = cameraFacing === 'user' ? 'environment' : 'user';
+  applyCameraFilter(0);
+  startCamera();
+};
+
+$('cameraCaptureBtn').onclick = () => {
+  if (!cameraStream) return;
+  const v = $('cameraVideo'), canvas = $('cameraCanvas');
+  canvas.width = v.videoWidth || 1280;
+  canvas.height = v.videoHeight || 720;
+  const ctx = canvas.getContext('2d');
+  // Mirror the capture if in selfie mode
+  if (cameraFacing === 'user') { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+  ctx.drawImage(v, 0, 0);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  // Apply filter via CSS filter to canvas context
+  const fcss = CAMERA_FILTERS[cameraFilterIdx].css;
+  if (fcss) { ctx.filter = fcss; ctx.drawImage(canvas, 0, 0); ctx.filter = 'none'; }
+  // Flash effect
+  const flash = document.createElement('div');
+  flash.className = 'camera-flash';
+  $('cameraViewfinder').appendChild(flash);
+  setTimeout(() => flash.remove(), 200);
+  // Show result
+  cameraCaptured = canvas.toDataURL('image/png');
+  $('cameraResultImg').src = cameraCaptured;
+  $('cameraVideo').style.display = 'none';
+  $('cameraCanvas').style.display = 'none';
+  $('cameraResult').style.display = '';
+  stopCamera();
+  $('cameraControls').style.display = 'none';
+};
+
+$('cameraRetakeBtn').onclick = () => {
+  cameraCaptured = null;
+  $('cameraResult').style.display = 'none';
+  $('cameraVideo').style.display = 'block';
+  $('cameraPlaceholder').style.display = 'none';
+  $('cameraControls').style.display = '';
+  startCamera();
+};
+
+$('cameraDownloadBtn').onclick = () => {
+  if (!cameraCaptured) return;
+  const a = document.createElement('a');
+  a.href = cameraCaptured;
+  a.download = 'camera-capture-' + Date.now() + '.png';
+  a.click();
+  buildShareRow('cameraShare', 'online-camera');
+};
+
+// Cleanup camera when navigating away
+document.querySelectorAll('#pageNav a').forEach(a => {
+  a.addEventListener('click', () => { if (cameraStream) stopCamera(); });
+});
 
 // ─── Init header share ───
 buildShareRow('socialHeader', null, true);

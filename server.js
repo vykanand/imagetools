@@ -324,12 +324,13 @@ const PAGE_SEO = {
   'background-blur': { title: 'Free Background Blur Tool — Blur Photo Background Online | ImageTools', desc: 'Blur photo backgrounds with AI-powered subject detection. Create beautiful portrait mode effects online for free. Adjustable blur intensity, instant download.', keywords: 'background blur, blur photo background, portrait mode, AI subject detection, blur background online' },
   'selfie-filter': { title: 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageTools', desc: 'Apply stunning selfie filter presets to your photos. Glow, vintage, B&W, vivid and more. Free online photo filter effects with one-click download.', keywords: 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online' },
   'image-uploader': { title: 'Free Image Uploader — Upload & Share Images Online | ImageTools', desc: 'Upload images and get instant shareable URLs for free. Drag-and-drop upload, copy links, manage uploads. Fast, private, no signup required.', keywords: 'image uploader, upload photos online, image hosting, share image link, drag and drop upload' },
+  'online-camera': { title: 'Free Online Camera — Take Photos with Webcam | ImageTools', desc: 'Use your device camera to take photos online for free. Capture, apply effects, download and share. No signup required, works in your browser.', keywords: 'online camera, webcam photo, take photo online, camera capture, webcam selfie' },
   'api-documentation': { title: 'ImageTools API Documentation — Developer Guide | ImageTools', desc: 'Complete API documentation for ImageTools. Background removal, image resizing, filters, and more. Integrate AI image processing into your apps.', keywords: 'API documentation, image processing API, background removal API, developer guide, REST API' }
 };
-const PAGE_NAMES = { 'remove-background': 'Background Remover', 'resize-image': 'Image Resizer', 'image-filter': 'Image Filter Editor', 'background-blur': 'Background Blur', 'selfie-filter': 'Selfie Filter', 'image-uploader': 'Image Uploader', 'api-documentation': 'API Documentation' };
+const PAGE_NAMES = { 'remove-background': 'Background Remover', 'resize-image': 'Image Resizer', 'image-filter': 'Image Filter Editor', 'background-blur': 'Background Blur', 'selfie-filter': 'Selfie Filter', 'image-uploader': 'Image Uploader', 'online-camera': 'Online Camera', 'api-documentation': 'API Documentation' };
 
 // SPA routes — inject SEO meta and serve index.html
-app.get(['/remove-background','/resize-image','/image-filter','/background-blur','/selfie-filter','/image-uploader','/api-documentation'], (req, res) => {
+app.get(['/remove-background','/resize-image','/image-filter','/background-blur','/selfie-filter','/image-uploader','/online-camera','/api-documentation'], (req, res) => {
   const page = req.path.slice(1);
   const s = PAGE_SEO[page] || PAGE_SEO['remove-background'];
   const base = req.protocol + '://' + req.get('host');
@@ -355,7 +356,7 @@ app.get('/robots.txt', (req, res) => {
 // Sitemap.xml
 app.get('/sitemap.xml', (req, res) => {
   const host = req.protocol + '://' + req.get('host');
-  const pages = ['remove-background','resize-image','image-filter','background-blur','selfie-filter','image-uploader','api-documentation'];
+  const pages = ['remove-background','resize-image','image-filter','background-blur','selfie-filter','image-uploader','online-camera','api-documentation'];
   const urls = pages.map(p => `  <url><loc>${host}/${p}</loc><changefreq>weekly</changefreq><priority>${p === 'remove-background' ? '1.0' : '0.8'}</priority></url>`).join('\n');
   res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`);
 });
