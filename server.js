@@ -158,12 +158,12 @@ app.post('/api/background-blur', upload.single('image'), async (req, res) => {
 // ─── Selfie filter presets ───
 const SELFIE_PRESETS = {
   glow: async (img) => {
-    img.brightness(0.12).contrast(0.08);
+    img.brightness(1.12).contrast(0.08);
     return img;
   },
   warm: async (img) => {
-    img.color([{ apply: 'mix', params: ['#ff9922', 12] }]);
-    img.contrast(0.05);
+    img.color([{ apply: 'red', params: [15] }, { apply: 'green', params: [8] }, { apply: 'blue', params: [-10] }]);
+    img.contrast(0.05).brightness(1.05);
     return img;
   },
   vintage: async (img) => {
@@ -176,20 +176,21 @@ const SELFIE_PRESETS = {
     return img;
   },
   'soft-glam': async (img) => {
-    img.brightness(0.08).gaussian(0.8);
+    img.brightness(1.08).blur(1);
     return img;
   },
   vivid: async (img) => {
     img.color([{ apply: 'saturate', params: [50] }]);
-    img.contrast(0.1).brightness(0.05);
+    img.contrast(0.1).brightness(1.05);
     return img;
   },
   cool: async (img) => {
-    img.color([{ apply: 'mix', params: ['#4488ff', 10] }, { apply: 'desaturate', params: [20] }]);
+    img.color([{ apply: 'mix', params: [{ r: 130, g: 200, b: 255 }, 12] }, { apply: 'desaturate', params: [8] }]);
+    img.contrast(0.1).brightness(1.05);
     return img;
   },
   dramatic: async (img) => {
-    img.contrast(0.2).brightness(-0.05);
+    img.contrast(0.2).brightness(0.95);
     applyVignette(img, 0.35);
     return img;
   }
