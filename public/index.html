@@ -23,6 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -291,6 +292,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       <a data-page="selfie-filter">Selfie</a>
       <a data-page="resize-image">Resize</a>
       <a data-page="image-filter">Filters</a>
+      <a data-page="image-to-text-ocr-converter">OCR</a>
       <a data-page="image-uploader">Upload</a>
       <a data-page="online-camera">Camera</a>
       <a data-page="api-documentation">API</a>
@@ -526,6 +528,38 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
         <button class="btn btn-success" id="downloadSelfieBtn">Download</button>
       </div>
       <div class="share-row" id="selfieShare" style="display:none"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ─── Page: Image to Text OCR Converter ─── -->
+<div class="page" id="page-image-to-text-ocr-converter">
+<div class="main">
+  <div class="hero">
+    <h1>Image to text.<br><span>Extract with OCR.</span></h1>
+    <p>Upload a photo or screenshot and convert image to text using optical character recognition. Accurate, fast, and free.</p>
+  </div>
+  <div class="upload-zone" id="ocrZone">
+    <input type="file" id="ocrFileInput" accept="image/*">
+    <div class="upload-placeholder">
+      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <h3>Drop an image here</h3>
+      <p>JPG, PNG, WebP &bull; Up to 20 MB</p>
+    </div>
+    <div class="image-display" id="ocrDisplay" style="display:none">
+      <img id="ocrPreview" alt="Uploaded image" style="max-width:100%;border-radius:var(--radius);margin-bottom:16px">
+      <div class="info-row" id="ocrInfo"></div>
+      <button class="btn btn-primary" id="ocrExtractBtn" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="vertical-align:middle;margin-right:6px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" x2="12" y1="18" y2="12"/><line x1="9" x2="15" y1="15" y2="15"/></svg>Extract Text</button>
+      <div class="loading" id="ocrLoading" style="display:none;margin-bottom:16px"><div class="spinner"></div><span>Extracting text…</span></div>
+      <div id="ocrResult" style="display:none">
+        <label style="font-size:13px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px">Extracted text:</label>
+        <textarea id="ocrOutput" readonly style="width:100%;min-height:150px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);color:var(--text);font-size:14px;line-height:1.6;resize:vertical;font-family:inherit"></textarea>
+        <div class="actions" style="margin-top:8px">
+          <button class="btn btn-outline" id="ocrCopyBtn">Copy Text</button>
+          <button class="btn btn-outline" id="ocrNewBtn">New Image</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1372,6 +1406,7 @@ const PAGE_DESCS = {
   'background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create portrait mode effects instantly.',
   'selfie-filter': 'Apply stunning filter presets to your selfies: glow, vintage, B&W, vivid, and more.',
   'image-uploader': 'Upload images and get instant shareable URLs for free. Drag and drop, copy links, manage uploads.',
+  'image-to-text-ocr-converter': 'Extract text from images instantly with free online OCR. Upload a photo or screenshot and convert image to text.',
   'online-camera': 'Use your device camera to take photos online for free. Capture, apply effects, download and share.',
   'api-documentation': 'Complete API documentation for ImageTools. Background removal, image processing, and more.'
 };
@@ -1384,6 +1419,7 @@ const PAGE_TITLES = {
   'background-blur': 'Free Background Blur Tool — Blur Photo Background Online | ImageTools',
   'selfie-filter': 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageTools',
   'image-uploader': 'Free Image Uploader — Upload & Share Images Online | ImageTools',
+  'image-to-text-ocr-converter': 'Free Image to Text OCR Converter — Extract Text from Images Online | ImageTools',
   'online-camera': 'Free Online Camera — Take Photos with Webcam | ImageTools',
   'api-documentation': 'ImageTools API Documentation — Developer Guide | ImageTools'
 };
@@ -1394,6 +1430,7 @@ const PAGE_DESCS_LONG = {
   'background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create beautiful portrait mode effects online for free. Adjustable blur intensity, instant download. No signup required.',
   'selfie-filter': 'Apply stunning selfie filter presets to your photos online for free. Glow, vintage, B&W, vivid and more. One-click download, no signup required.',
   'image-uploader': 'Upload images and get instant shareable URLs for free. Drag-and-drop upload, copy links, manage uploads. Fast, private, no signup required.',
+  'image-to-text-ocr-converter': 'Extract text from images instantly with our free online OCR converter. Upload a photo or screenshot and convert image to text. Accurate, fast, no signup required.',
   'online-camera': 'Use your device camera to take photos online for free. Capture with webcam, apply real-time filters, download and share. No signup required, works in your browser.',
   'api-documentation': 'Complete API documentation for ImageTools. Background removal, image resizing, filters, and more. Integrate AI image processing into your apps with simple REST endpoints.'
 };
@@ -1404,6 +1441,7 @@ const PAGE_KEYWORDS = {
   'background-blur': 'background blur, blur photo background, portrait mode, AI subject detection, blur background online',
   'selfie-filter': 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online, photo editor',
   'image-uploader': 'image uploader, upload photos online, image hosting, share image link, drag and drop upload',
+  'image-to-text-ocr-converter': 'image to text converter, OCR online, extract text from image, image to text OCR, photo to text, optical character recognition, free OCR tool',
   'online-camera': 'online camera, webcam photo, take photo online, camera capture, webcam selfie, browser camera',
   'api-documentation': 'API documentation, image processing API, background removal API, developer guide, REST API'
 };
@@ -2012,6 +2050,58 @@ $('downloadSelfieBtn').onclick = () => {
   a.download = (selfieOrigName ? selfieOrigName.replace(/\.[^.]+$/,'') : 'image') + '-' + presetLabel.toLowerCase() + '.png';
   a.click();
   buildShareRow('selfieShare', 'selfie-filter');
+};
+
+// ─── Image to Text OCR Converter Page ───
+let ocrFile = null;
+$('ocrFileInput').onchange = e => { if (e.target.files[0]) loadOcrImg(e.target.files[0]); };
+$('ocrZone').addEventListener('dragover', e => { e.preventDefault(); $('ocrZone').classList.add('dragover'); });
+$('ocrZone').addEventListener('dragleave', () => $('ocrZone').classList.remove('dragover'));
+$('ocrZone').addEventListener('drop', e => { e.preventDefault(); $('ocrZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadOcrImg(e.dataTransfer.files[0]); });
+
+function loadOcrImg(file) {
+  if (!file.type.startsWith('image/')) return toast('Please select an image','error');
+  ocrFile = file;
+  const r = new FileReader();
+  r.onload = e => {
+    $('ocrPreview').src = e.target.result;
+    $('ocrPreview').onload = () => {
+      $('ocrDisplay').style.display = 'block';
+      $('ocrZone').classList.add('has-result');
+      $('ocrInfo').innerHTML = `<span>${$('ocrPreview').naturalWidth}\u00d7${$('ocrPreview').naturalHeight}px</span>`;
+    };
+  };
+  r.readAsDataURL(file);
+}
+
+$('ocrExtractBtn').onclick = async () => {
+  if (!ocrFile) return toast('Please upload an image first','error');
+  const ld = $('ocrLoading'); ld.style.display = 'flex';
+  $('ocrResult').style.display = 'none';
+  try {
+    const { data: { text } } = await Tesseract.recognize(ocrFile, 'eng', { logger: m => { if (m.status === 'recognizing text') $('ocrLoading').querySelector('span').textContent = 'Extracting text\u2026 ' + Math.round(m.progress * 100) + '%'; } });
+    $('ocrOutput').value = text.trim() || '(no text found)';
+    $('ocrResult').style.display = 'block';
+  } catch (e) {
+    toast('OCR failed: ' + e.message, 'error');
+  } finally {
+    ld.style.display = 'none';
+    $('ocrLoading').querySelector('span').textContent = 'Extracting text\u2026';
+  }
+};
+
+$('ocrCopyBtn').onclick = () => {
+  const t = $('ocrOutput');
+  t.select(); t.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(t.value).then(() => toast('Text copied!','success')).catch(() => {});
+};
+
+$('ocrNewBtn').onclick = () => {
+  $('ocrZone').classList.remove('has-result');
+  $('ocrDisplay').style.display = 'none';
+  $('ocrResult').style.display = 'none';
+  $('ocrFileInput').value = '';
+  ocrFile = null;
 };
 
 // ─── Image Uploader Page ───
