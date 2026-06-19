@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Imagetools — Background Remover</title>
+<meta name="description" content="Free online background removal tool powered by AI. Remove backgrounds, resize images, and apply filters all in one place.">
+<meta name="keywords" content="background remover, image resizer, image filter, photo editor, free online tool">
+<meta property="og:title" content="ImageTools — Background Remover, Resizer & Filter">
+<meta property="og:description" content="Free online image editing tools: remove backgrounds with AI, resize images, apply filters. No signup required.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://imagetools.example.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -213,6 +219,16 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 .rrow input[type=number]{width:100px;flex:none}
 .rrow input[type=range]{flex:1}
 .rrow .rval{font-size:12px;color:var(--text-muted);min-width:45px;text-align:right;font-variant-numeric:tabular-nums}
+.share-row{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.share-row .label{font-size:11px;color:var(--text-muted);margin-right:4px;white-space:nowrap}
+.sbtn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:var(--transition);text-decoration:none}
+.sbtn:hover{background:var(--card-hover);border-color:var(--text-dim);color:var(--text)}
+.sbtn-sm{width:28px;height:28px}
+.sbtn svg{width:16px;height:16px}
+.sbtn-sm svg{width:13px;height:13px}
+.s-header{display:flex;gap:4px;align-items:center;margin-right:6px}
+.s-header .sbtn{width:28px;height:28px;border-color:transparent}
+.s-header .sbtn:hover{background:var(--card-hover);border-color:var(--border)}
 @media(max-width:640px){
   .header{padding:10px 16px}
   .hero h1{font-size:26px}
@@ -240,7 +256,10 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       <a data-page="filter">Filters</a>
     </div>
   </div>
-  <div class="header-actions" id="headerActions"></div>
+  <div style="display:flex;align-items:center;gap:0">
+    <div class="s-header" id="socialHeader"></div>
+    <div class="header-actions" id="headerActions"></div>
+  </div>
 </div>
 
 <div class="page active" id="page-bg">
@@ -284,6 +303,8 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
         </button>
         <button class="btn" id="bgToggleBtn">Background</button>
       </div>
+
+      <div class="share-row" id="bgShare" style="display:none"></div>
 
       <div class="bg-section" id="bgSection">
         <div class="bg-section-header" id="bgSectionHeader">
@@ -361,6 +382,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
         <button class="btn btn-primary" id="applyResizeBtn" style="flex:1">Apply Resize</button>
         <button class="btn btn-success" id="downloadResizeBtn" style="flex:1">Download</button>
       </div>
+      <div class="share-row" id="resizeShare" style="display:none"></div>
     </div>
   </div>
 </div>
@@ -388,6 +410,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
         <button class="btn" id="resetFilterBtn" style="flex:1">Reset</button>
         <button class="btn btn-success" id="downloadFilterBtn" style="flex:1">Download</button>
       </div>
+      <div class="share-row" id="filterShare" style="display:none"></div>
     </div>
   </div>
 </div>
@@ -530,6 +553,7 @@ $('downloadBtn').onclick = () => {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+  buildShareRow('bgShare', 'bg');
 };
 
 $('aiRemoveBtn').onclick = () => { if (originalImage) runAiRemoval(); };
@@ -966,16 +990,73 @@ $('bgSectionHeader').addEventListener('click', () => {
   }
 });
 
+// ─── Share ───
+const SHARE_PLATFORMS = [
+  {id:'whatsapp',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-1.099-1.02-1.84-2.28-2.057-2.665-.217-.386-.023-.595.163-.788.168-.173.374-.452.561-.678.188-.226.25-.389.376-.648.124-.259.062-.484-.03-.678-.094-.193-.672-1.62-.922-2.218-.242-.579-.487-.5-.671-.51-.173-.008-.372-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.199 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>'},
+  {id:'instagram',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>'},
+  {id:'facebook',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>'},
+  {id:'twitter',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>'}
+];
+const PAGE_DESCS = {
+  bg: 'Remove backgrounds from photos instantly using AI. Free online tool — no signup required.',
+  resize: 'Resize images to any dimensions for free. Maintain aspect ratio, choose presets, download in one click.',
+  filter: 'Apply filters to your images: brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation.'
+};
+
+function sit() { return 'https://imagetools.example.com'; }
+function shareText(pageId) {
+  return encodeURIComponent('Check out ImageTools — ' + (PAGE_DESCS[pageId] || 'Free online image tools'));
+}
+function shareUrl() { return encodeURIComponent(sit()); }
+
+function shareTo(platform, pageId) {
+  const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'bg';
+  const txt = shareText(p), url = shareUrl();
+  const links = {
+    whatsapp: `https://wa.me/?text=${txt}%20${url}`,
+    instagram: null,
+    facebook: `https://facebook.com/sharer/sharer.php?u=${url}&quote=${txt}`,
+    twitter: `https://x.com/intent/tweet?text=${txt}&url=${url}`
+  };
+  const link = links[platform];
+  if (link) window.open(link, '_blank', 'width=600,height=500');
+  else if (platform === 'instagram') {
+    navigator.clipboard.writeText(sit() + ' — ' + decodeURIComponent(shareText(p))).then(() => toast('Link copied! Paste on Instagram', 'success'));
+    window.open('https://www.instagram.com/', '_blank');
+  }
+}
+
+function buildShareRow(containerId, pageId, compact) {
+  const c = $(containerId);
+  if (!c) return;
+  c.innerHTML = '';
+  c.style.display = 'flex';
+  if (!compact) { const l = document.createElement('span'); l.className = 'label'; l.textContent = 'Share:'; c.appendChild(l); }
+  SHARE_PLATFORMS.forEach(sp => {
+    const a = document.createElement('a');
+    a.className = 'sbtn' + (compact ? ' sbtn-sm' : '');
+    a.innerHTML = sp.icon;
+    a.href = '#';
+    a.title = 'Share on ' + sp.id.charAt(0).toUpperCase() + sp.id.slice(1);
+    a.onclick = e => { e.preventDefault(); shareTo(sp.id, pageId); };
+    c.appendChild(a);
+  });
+}
+
 // ─── Page Navigation ───
 document.querySelectorAll('#pageNav a').forEach(a => {
   a.addEventListener('click', () => {
     document.querySelectorAll('#pageNav a').forEach(x => x.classList.remove('active'));
     document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
     a.classList.add('active');
-    $(`page-${a.dataset.page}`).classList.add('active');
+    const page = a.dataset.page;
+    $(`page-${page}`).classList.add('active');
     document.title = 'Imagetools — ' + a.textContent;
-    // Stop AI loader when leaving bg page
-    if (a.dataset.page !== 'bg') { imageLoader.classList.remove('show'); aiRunning = false; }
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.content = PAGE_DESCS[page] || 'Free online image editing tools.';
+    const og = document.querySelector('meta[property="og:description"]');
+    if (og) og.content = PAGE_DESCS[page] || 'Free online image editing tools.';
+    if (page !== 'bg') { imageLoader.classList.remove('show'); aiRunning = false; }
   });
 });
 
@@ -1126,6 +1207,7 @@ $('downloadResizeBtn').onclick = () => {
   a.href = $('resizePreview').src;
   a.download = (resizeOrigName ? resizeOrigName.replace(/\.[^.]+$/,'') : 'image') + `-${w}x${h}.png`;
   a.click();
+  buildShareRow('resizeShare', 'resize');
 };
 
 // ─── Filter Page ───
@@ -1210,7 +1292,11 @@ $('downloadFilterBtn').onclick = () => {
   a.href = c.toDataURL('image/png');
   a.download = (filterOrigName ? filterOrigName.replace(/\.[^.]+$/,'') : 'image') + '-' + String(Math.floor(10000 + Math.random()*90000)) + '.png';
   a.click();
+  buildShareRow('filterShare', 'filter');
 };
+
+// ─── Init header share ───
+buildShareRow('socialHeader', null, true);
 
 renderHeader();
 </script>
