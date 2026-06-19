@@ -190,6 +190,24 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 .toast.show{opacity:1;transform:translateY(0) scale(1)}
 .toast.success{background:var(--success);color:#05050a}
 .toast.error{background:var(--error)}
+.page{display:none}
+.page.active{display:block}
+.nav{display:flex;gap:2px;align-items:center;margin:0 20px}
+.nav a{padding:7px 14px;border-radius:var(--radius-xs);font-size:13px;font-weight:500;color:var(--text-muted);text-decoration:none;cursor:pointer;transition:var(--transition)}
+.nav a:hover{color:var(--text);background:var(--card-hover)}
+.nav a.active{color:#fff;background:var(--accent)}
+.preview-box{width:100%;border-radius:var(--radius);overflow:hidden;background:var(--card);margin-bottom:12px;min-height:200px;display:flex;align-items:center;justify-content:center}
+.preview-box img{display:block;max-width:100%;max-height:400px;object-fit:contain}
+.preview-box .empty-state{color:var(--text-dim);font-size:14px}
+.filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.filter-group label{display:block;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.filter-group label span{color:var(--text);text-transform:none;letter-spacing:0}
+.filter-group input[type=range]{width:100%}
+.resize-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.resize-presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.resize-presets .btn{padding:5px 10px;font-size:11px}
+.info-row{display:flex;gap:16px;font-size:12px;color:var(--text-muted);margin-bottom:10px;flex-wrap:wrap}
+.info-row span{white-space:nowrap}
 @media(max-width:640px){
   .header{padding:10px 16px}
   .hero h1{font-size:26px}
@@ -198,16 +216,29 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
   .actions .btn{min-width:100px;flex:1}
   .modal{padding:24px}
 }
+@media(max-width:640px){
+  .nav{margin:0 8px}
+  .nav a{padding:5px 8px;font-size:11px}
+  .filter-grid,.resize-controls{grid-template-columns:1fr}
+}
 @media(max-width:480px){.header .user .name{display:none}}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="logo"><div class="logo-mark">✦</div>Image<span>tools</span></div>
+  <div style="display:flex;align-items:center">
+    <div class="logo"><div class="logo-mark">✦</div>Image<span>tools</span></div>
+    <div class="nav" id="pageNav">
+      <a class="active" data-page="bg">Background</a>
+      <a data-page="resize">Resize</a>
+      <a data-page="filter">Filters</a>
+    </div>
+  </div>
   <div class="header-actions" id="headerActions"></div>
 </div>
 
+<div class="page active" id="page-bg">
 <div class="main">
   <div class="hero">
     <h1>Remove backgrounds.<br><span>Add anything behind.</span></h1>
@@ -287,6 +318,65 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       </div>
     </div>
   </div>
+</div>
+</div>
+
+<!-- ─── Page: Resize ─── -->
+<div class="page" id="page-resize">
+<div class="main">
+  <div class="hero">
+    <h1>Resize images.<br><span>Scale to any size.</span></h1>
+    <p>Upload an image and resize it by exact dimensions or percentage.</p>
+  </div>
+  <div class="upload-zone" id="resizeZone">
+    <input type="file" id="resizeFileInput" accept="image/*">
+    <div class="upload-placeholder">
+      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <h3>Drop an image here</h3>
+      <p>JPG, PNG, WebP &bull; Up to 20 MB</p>
+    </div>
+    <div class="image-display" id="resizeDisplay" style="display:none">
+      <div class="preview-box"><img id="resizePreview" alt="Preview"><span class="empty-state" id="resizeEmpty">No image loaded</span></div>
+      <div class="info-row" id="resizeInfo"></div>
+      <div class="fg"><label>Width (px)</label><input type="number" id="resizeW" min="1" max="10000"></div>
+      <div class="fg"><label>Height (px)</label><input type="number" id="resizeH" min="1" max="10000"></div>
+      <div class="fg" style="flex-direction:row;align-items:center;gap:8px;margin-bottom:10px"><input type="checkbox" id="resizeLock" checked><label style="margin:0;text-transform:none;letter-spacing:0">Maintain aspect ratio</label></div>
+      <div class="fg" style="display:flex;gap:10px;align-items:center"><label style="white-space:nowrap">Scale:</label><input type="range" id="resizePct" min="1" max="200" value="100" style="flex:1"><span id="resizePctVal" style="font-size:13px;min-width:40px">100%</span></div>
+      <div class="resize-presets" id="resizePresets"></div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="btn btn-primary" id="applyResizeBtn" style="flex:1">Apply Resize</button>
+        <button class="btn btn-success" id="downloadResizeBtn" style="flex:1">Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ─── Page: Filters ─── -->
+<div class="page" id="page-filter">
+<div class="main">
+  <div class="hero">
+    <h1>Apply filters.<br><span>Transform with effects.</span></h1>
+    <p>Upload an image and adjust brightness, contrast, saturation, and more.</p>
+  </div>
+  <div class="upload-zone" id="filterZone">
+    <input type="file" id="filterFileInput" accept="image/*">
+    <div class="upload-placeholder">
+      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <h3>Drop an image here</h3>
+      <p>JPG, PNG, WebP &bull; Up to 20 MB</p>
+    </div>
+    <div class="image-display" id="filterDisplay" style="display:none">
+      <div class="preview-box"><img id="filterPreview" alt="Preview"><span class="empty-state" id="filterEmpty">No image loaded</span></div>
+      <div class="info-row" id="filterInfo"></div>
+      <div class="filter-grid" id="filterControls"></div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="btn" id="resetFilterBtn" style="flex:1">Reset</button>
+        <button class="btn btn-success" id="downloadFilterBtn" style="flex:1">Download</button>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
 <div class="modal-overlay" id="authModal">
@@ -861,6 +951,208 @@ $('bgSectionHeader').addEventListener('click', () => {
     $('composePreview').style.display = 'none';
   }
 });
+
+// ─── Page Navigation ───
+document.querySelectorAll('#pageNav a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.querySelectorAll('#pageNav a').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+    $(`page-${a.dataset.page}`).classList.add('active');
+    document.title = 'Imagetools — ' + a.textContent;
+    // Stop AI loader when leaving bg page
+    if (a.dataset.page !== 'bg') { imageLoader.classList.remove('show'); aiRunning = false; }
+  });
+});
+
+// ─── Resize Page ───
+let resizeImg = null, resizeOrigName = '';
+const RESIZE_PRESETS = [
+  {w:1080,h:1080,name:'1080×1080'},{w:1920,h:1080,name:'1920×1080'},
+  {w:1280,h:720,name:'1280×720'},{w:800,h:600,name:'800×600'},
+  {w:400,h:300,name:'400×300'},{w:150,h:150,name:'150×150'}
+];
+
+$('resizeFileInput').onchange = e => { if (e.target.files[0]) loadResize(e.target.files[0]); };
+$('resizeZone').addEventListener('dragover', e => { e.preventDefault(); $('resizeZone').classList.add('dragover'); });
+$('resizeZone').addEventListener('dragleave', () => $('resizeZone').classList.remove('dragover'));
+$('resizeZone').addEventListener('drop', e => { e.preventDefault(); $('resizeZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadResize(e.dataTransfer.files[0]); });
+
+function loadResize(file) {
+  if (!file.type.startsWith('image/')) return toast('Please select an image','error');
+  resizeOrigName = file.name;
+  const r = new FileReader();
+  r.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      resizeImg = img;
+      $('resizePreview').src = img.src;
+      $('resizePreview').style.display = '';
+      $('resizeEmpty').style.display = 'none';
+      $('resizeDisplay').style.display = 'flex';
+      $('resizeZone').classList.add('has-result');
+      $('resizeW').value = img.naturalWidth;
+      $('resizeH').value = img.naturalHeight;
+      $('resizeInfo').innerHTML = `<span>Original: ${img.naturalWidth}×${img.naturalHeight}px</span>`;
+      updateResizePresets();
+    };
+    img.src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function updateResizePresets() {
+  if (!resizeImg) return;
+  const c = $('resizePresets');
+  c.innerHTML = '';
+  RESIZE_PRESETS.forEach(p => {
+    const b = document.createElement('button');
+    b.className = 'btn btn-sm btn-outline';
+    b.textContent = p.name;
+    b.onclick = () => { $('resizeW').value = p.w; $('resizeH').value = p.h; };
+    c.appendChild(b);
+  });
+  // Original size button
+  const ob = document.createElement('button');
+  ob.className = 'btn btn-sm btn-outline';
+  ob.textContent = `${resizeImg.naturalWidth}×${resizeImg.naturalHeight}`;
+  ob.onclick = () => { $('resizeW').value = resizeImg.naturalWidth; $('resizeH').value = resizeImg.naturalHeight; };
+  c.appendChild(ob);
+}
+
+let resizeLocked = true;
+$('resizeLock').onchange = () => { resizeLocked = $('resizeLock').checked; };
+
+$('resizeW').oninput = () => {
+  if (resizeLocked && resizeImg) {
+    const r = resizeImg.naturalHeight / resizeImg.naturalWidth;
+    $('resizeH').value = Math.round($('resizeW').value * r);
+  }
+};
+$('resizeH').oninput = () => {
+  if (resizeLocked && resizeImg) {
+    const r = resizeImg.naturalWidth / resizeImg.naturalHeight;
+    $('resizeW').value = Math.round($('resizeH').value * r);
+  }
+};
+$('resizePct').oninput = () => {
+  const pct = +$('resizePct').value;
+  $('resizePctVal').textContent = pct + '%';
+  if (resizeImg) {
+    $('resizeW').value = Math.round(resizeImg.naturalWidth * pct / 100);
+    $('resizeH').value = Math.round(resizeImg.naturalHeight * pct / 100);
+  }
+};
+
+$('applyResizeBtn').onclick = () => {
+  if (!resizeImg) return;
+  const w = +$('resizeW').value, h = +$('resizeH').value;
+  if (!w || !h || w<1 || h<1) return toast('Invalid dimensions','error');
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const cx = c.getContext('2d');
+  cx.drawImage(resizeImg, 0, 0, w, h);
+  $('resizePreview').src = c.toDataURL('image/png');
+  $('resizePreview').onload = () => {
+    $('resizeInfo').innerHTML = `<span>Original: ${resizeImg.naturalWidth}×${resizeImg.naturalHeight}px</span><span>Resized: ${w}×${h}px</span>`;
+  };
+  resizeImg.onload = null;
+  resizeImg = new Image();
+  resizeImg.src = c.toDataURL('image/png');
+  toast(`Resized to ${w}×${h}`, 'success');
+};
+
+$('downloadResizeBtn').onclick = () => {
+  if (!$('resizePreview').src || $('resizePreview').src === $('resizeEmpty').src) return;
+  const a = document.createElement('a');
+  a.href = $('resizePreview').src;
+  a.download = (resizeOrigName ? resizeOrigName.replace(/\.[^.]+$/,'') : 'image') + '-resized.png';
+  a.click();
+};
+
+// ─── Filter Page ───
+const FILTERS = [
+  {id:'brightness',label:'Brightness',min:0,max:200,step:1,def:100,unit:'%',css:'brightness({v}%)'},
+  {id:'contrast',label:'Contrast',min:0,max:200,step:1,def:100,unit:'%',css:'contrast({v}%)'},
+  {id:'saturate',label:'Saturate',min:0,max:300,step:1,def:100,unit:'%',css:'saturate({v}%)'},
+  {id:'grayscale',label:'Grayscale',min:0,max:100,step:1,def:0,unit:'%',css:'grayscale({v}%)'},
+  {id:'sepia',label:'Sepia',min:0,max:100,step:1,def:0,unit:'%',css:'sepia({v}%)'},
+  {id:'hue',label:'Hue Rotate',min:0,max:360,step:1,def:0,unit:'°',css:'hue-rotate({v}deg)'},
+  {id:'blur',label:'Blur',min:0,max:20,step:0.5,def:0,unit:'px',css:'blur({v}px)'},
+];
+let filterImg = null, filterOrigName = '';
+
+$('filterFileInput').onchange = e => { if (e.target.files[0]) loadFilter(e.target.files[0]); };
+$('filterZone').addEventListener('dragover', e => { e.preventDefault(); $('filterZone').classList.add('dragover'); });
+$('filterZone').addEventListener('dragleave', () => $('filterZone').classList.remove('dragover'));
+$('filterZone').addEventListener('drop', e => { e.preventDefault(); $('filterZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadFilter(e.dataTransfer.files[0]); });
+
+function loadFilter(file) {
+  if (!file.type.startsWith('image/')) return toast('Please select an image','error');
+  filterOrigName = file.name;
+  const r = new FileReader();
+  r.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      filterImg = img;
+      $('filterPreview').src = img.src;
+      $('filterPreview').style.display = '';
+      $('filterEmpty').style.display = 'none';
+      $('filterDisplay').style.display = 'flex';
+      $('filterZone').classList.add('has-result');
+      $('filterInfo').innerHTML = `<span>${img.naturalWidth}×${img.naturalHeight}px</span>`;
+      buildFilterControls();
+      applyFilters();
+    };
+    img.src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function buildFilterControls() {
+  const c = $('filterControls');
+  c.innerHTML = '';
+  FILTERS.forEach(f => {
+    const g = document.createElement('div');
+    g.className = 'filter-group';
+    g.innerHTML = `<label>${f.label} <span id="fv_${f.id}">${f.def}${f.unit}</span></label><input type="range" id="flt_${f.id}" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.def}">`;
+    g.querySelector('input').addEventListener('input', applyFilters);
+    c.appendChild(g);
+  });
+}
+
+function getFilterCss() {
+  return FILTERS.map(f => {
+    const v = $(`flt_${f.id}`).value;
+    $(`fv_${f.id}`).textContent = v + f.unit;
+    return f.css.replace('{v}', v);
+  }).join(' ');
+}
+
+function applyFilters() {
+  if (!filterImg) return;
+  $('filterPreview').style.filter = getFilterCss();
+}
+
+$('resetFilterBtn').onclick = () => {
+  FILTERS.forEach(f => { $(`flt_${f.id}`).value = f.def; $(`fv_${f.id}`).textContent = f.def + f.unit; });
+  applyFilters();
+  toast('Filters reset','success');
+};
+
+$('downloadFilterBtn').onclick = () => {
+  if (!filterImg) return;
+  const c = document.createElement('canvas');
+  c.width = filterImg.naturalWidth;
+  c.height = filterImg.naturalHeight;
+  const cx = c.getContext('2d');
+  cx.filter = getFilterCss();
+  cx.drawImage(filterImg, 0, 0);
+  const a = document.createElement('a');
+  a.href = c.toDataURL('image/png');
+  a.download = (filterOrigName ? filterOrigName.replace(/\.[^.]+$/,'') : 'image') + '-filtered.png';
+  a.click();
+};
 
 renderHeader();
 </script>
