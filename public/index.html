@@ -1121,9 +1121,10 @@ $('applyResizeBtn').onclick = () => {
 
 $('downloadResizeBtn').onclick = () => {
   if (!resizeImg) return;
+  const w = resizeImg.naturalWidth, h = resizeImg.naturalHeight;
   const a = document.createElement('a');
   a.href = $('resizePreview').src;
-  a.download = (resizeOrigName ? resizeOrigName.replace(/\.[^.]+$/,'') : 'image') + '-resized.png';
+  a.download = (resizeOrigName ? resizeOrigName.replace(/\.[^.]+$/,'') : 'image') + `-${w}x${h}.png`;
   a.click();
 };
 
@@ -1207,7 +1208,7 @@ $('downloadFilterBtn').onclick = () => {
   cx.drawImage(filterImg, 0, 0);
   const a = document.createElement('a');
   a.href = c.toDataURL('image/png');
-  a.download = (filterOrigName ? filterOrigName.replace(/\.[^.]+$/,'') : 'image') + '-filtered.png';
+  a.download = (filterOrigName ? filterOrigName.replace(/\.[^.]+$/,'') : 'image') + '-' + String(Math.floor(10000 + Math.random()*90000)) + '.png';
   a.click();
 };
 
