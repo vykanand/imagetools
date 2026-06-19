@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Imagetools — Background Remover</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05050a;--surface:#0c0c14;--card:#12121e;--card-hover:#1a1a2a;
+  --border:#1e1e32;--border-active:#6c5ce7;
+  --text:#e8e8f0;--text-muted:#6b6b8a;--text-dim:#44446a;
+  --accent:#6c5ce7;--accent-glow:#a29bfe;--accent-bg:rgba(108,92,231,.12);
+  --success:#00d68f;--error:#ff6b6b;
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+  --shadow:0 8px 32px rgba(0,0,0,.4);
+  --transition:all .25s cubic-bezier(.4,0,.2,1)
+}
+html{height:100%}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale
+}
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;border-bottom:1px solid var(--border);
+  background:rgba(12,12,20,.8);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  position:sticky;top:0;z-index:100
+}
+.logo{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;letter-spacing:-.3px}
+.logo-mark{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),var(--accent-glow));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff}
+.logo span{color:var(--text-muted);font-weight:400}
+.header-actions{display:flex;gap:8px;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px 18px;border-radius:var(--radius-sm);
+  font-family:inherit;font-size:13px;font-weight:600;
+  cursor:pointer;transition:var(--transition);
+  border:1px solid var(--border);background:transparent;color:var(--text);
+  white-space:nowrap;user-select:none
+}
+.btn:hover{background:var(--card-hover);border-color:var(--text-dim)}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#5a4bd1);border-color:var(--accent);color:#fff;box-shadow:0 2px 12px rgba(108,92,231,.3)}
+.btn-primary:hover{box-shadow:0 4px 20px rgba(108,92,231,.45);filter:brightness(1.08)}
+.btn-success{background:var(--success);border-color:var(--success);color:#05050a}
+.btn-success:hover{filter:brightness(1.15)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--text-muted)}
+.btn-ghost:hover{background:var(--card-hover);color:var(--text)}
+.btn-outline{border-color:var(--border);background:transparent}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.main{max-width:960px;margin:0 auto;padding:32px 24px 80px}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-size:36px;font-weight:800;letter-spacing:-1px;line-height:1.2;margin-bottom:8px}
+.hero h1 span{background:linear-gradient(135deg,var(--accent-glow),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--text-muted);font-size:15px;line-height:1.5;max-width:520px;margin:0 auto}
+.upload-zone{
+  position:relative;border:2px dashed var(--border);border-radius:var(--radius);
+  padding:56px 24px;text-align:center;cursor:pointer;
+  transition:var(--transition);background:var(--card);overflow:hidden
+}
+.upload-zone:hover{border-color:var(--accent);background:var(--accent-bg)}
+.upload-zone.dragover{border-color:var(--accent);background:var(--accent-bg);transform:scale(1.01)}
+.upload-zone.has-result{padding:20px;border-style:solid;cursor:default}
+.upload-zone.has-result input[type=file]{display:none}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-icon{width:48px;height:48px;margin:0 auto 16px;color:var(--text-dim);transition:var(--transition)}
+.upload-zone:hover .upload-icon{color:var(--accent)}
+.upload-zone h3{font-size:16px;font-weight:600;margin-bottom:4px}
+.upload-zone p{color:var(--text-muted);font-size:13px}
+.upload-zone.has-result .upload-placeholder{display:none}
+.image-display{display:none;flex-direction:column;gap:16px}
+.upload-zone.has-result .image-display{display:flex}
+canvas{display:none}
+.comparison{
+  position:relative;width:100%;border-radius:var(--radius);overflow:hidden;
+  background:var(--card);user-select:none;cursor:ew-resize
+}
+.comparison img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.comparison .after-wrap{
+  position:relative;width:100%;
+  background-image:linear-gradient(45deg,var(--border) 25%,transparent 25%),linear-gradient(-45deg,var(--border) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--border) 75%),linear-gradient(-45deg,transparent 75%,var(--border) 75%);
+  background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0px
+}
+.comparison .before-wrap{
+  position:absolute;top:0;left:0;width:50%;height:100%;overflow:hidden;z-index:5;
+  border-right:2px solid var(--accent-glow)
+}
+.comparison .before-wrap img{width:auto;height:100%;max-width:none;position:absolute;top:0;left:0}
+.comparison .label{
+  position:absolute;bottom:10px;padding:3px 10px;border-radius:20px;
+  font-size:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  pointer-events:none;color:#fff
+}
+.comparison .label-l{left:10px}
+.comparison .label-r{right:10px}
+.comparison-handle{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.95);box-shadow:0 2px 12px rgba(0,0,0,.4);
+  display:flex;align-items:center;justify-content:center;z-index:10;pointer-events:none
+}
+.comparison-handle svg{width:20px;height:20px;color:#444}
+.image-loader{
+  display:none;position:absolute;inset:0;z-index:20;
+  background:rgba(5,5,10,.7);
+  align-items:center;justify-content:center;flex-direction:column;gap:12px;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  border-radius:var(--radius)
+}
+.image-loader.show{display:flex}
+.image-loader .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+.image-loader p{color:var(--text);font-size:14px;font-weight:500}
+
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.actions .btn{min-width:120px}
+.loading{display:none;align-items:center;justify-content:center;gap:10px;padding:16px;color:var(--text-muted);font-size:14px}
+.loading.show{display:flex}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bg-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.bg-section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;cursor:pointer;user-select:none;transition:var(--transition)
+}
+.bg-section-header:hover{background:var(--card-hover)}
+.bg-section-header h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.bg-section-header .chevron{transition:transform .3s;color:var(--text-muted)}
+.bg-section-header .chevron.open{transform:rotate(180deg)}
+.bg-section-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border)}
+.bg-section-body.open{display:block}
+.bg-tabs{display:flex;gap:3px;margin-top:16px;margin-bottom:18px;background:var(--bg);padding:3px;border-radius:var(--radius-sm)}
+.bg-tab{padding:7px 16px;border-radius:5px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-muted);transition:var(--transition);font-family:inherit}
+.bg-tab.active{background:var(--accent);color:#fff}
+.bg-panel{display:none}
+.bg-panel.active{display:block}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.fg input,.fg select{width:100%;padding:9px 12px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:var(--transition)}
+.fg input:focus,.fg select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,92,231,.15)}
+.fg input[type=color]{height:38px;padding:3px;cursor:pointer}
+.color-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.color-row input[type=color]{flex:0 0 38px}
+.color-row input[type=text]{flex:1}
+.color-row .rm{width:28px;height:28px;border-radius:5px;border:none;background:var(--error);color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.add-color{background:transparent;border:1px dashed var(--border);color:var(--accent);padding:6px 12px;border-radius:var(--radius-xs);cursor:pointer;font-size:12px;font-family:inherit;margin-bottom:10px;transition:var(--transition)}
+.add-color:hover{border-color:var(--accent);background:var(--accent-bg)}
+.auth-banner{
+  padding:14px 18px;background:var(--accent-bg);border:1px solid rgba(108,92,231,.2);
+  border-radius:var(--radius-sm);text-align:center;font-size:13px;color:var(--text-muted);margin-top:14px
+}
+.auth-banner a{color:var(--accent);cursor:pointer;font-weight:600}
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(5,5,10,.8);
+  z-index:1000;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:32px;width:400px;max-width:92vw;box-shadow:var(--shadow);
+  animation:modalIn .25s ease
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}}
+.modal .close{float:right;background:none;border:none;color:var(--text-muted);font-size:22px;cursor:pointer;line-height:1;padding:4px}
+.modal h2{font-size:20px;font-weight:700;margin-bottom:4px}
+.modal .sub{color:var(--text-muted);font-size:13px;margin-bottom:20px}
+.modal .fg input{width:100%}
+.modal .btn{width:100%;margin-top:4px}
+.modal .switch{text-align:center;margin-top:14px;font-size:13px;color:var(--text-muted)}
+.modal .switch a{color:var(--accent);cursor:pointer;font-weight:600}
+.modal .error{color:var(--error);font-size:13px;display:none;margin-top:8px}
+.user{display:flex;align-items:center;gap:8px}
+.user .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-glow));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.user .name{font-size:13px;font-weight:500}
+.toast{
+  position:fixed;bottom:24px;right:24px;padding:10px 20px;border-radius:var(--radius-sm);
+  color:#fff;font-size:13px;font-weight:500;z-index:2000;
+  opacity:0;transform:translateY(16px) scale(.95);transition:var(--transition);pointer-events:none
+}
+.toast.show{opacity:1;transform:translateY(0) scale(1)}
+.toast.success{background:var(--success);color:#05050a}
+.toast.error{background:var(--error)}
+@media(max-width:640px){
+  .header{padding:10px 16px}
+  .hero h1{font-size:26px}
+  .main{padding:20px 12px 60px}
+  .upload-zone{padding:36px 16px}
+  .actions .btn{min-width:100px;flex:1}
+  .modal{padding:24px}
+}
+@media(max-width:480px){.header .user .name{display:none}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo"><div class="logo-mark">✦</div>Image<span>tools</span></div>
+  <div class="header-actions" id="headerActions"></div>
+</div>
+
+<div class="main">
+  <div class="hero">
+    <h1>Remove backgrounds.<br><span>Add anything behind.</span></h1>
+    <p>Upload a photo and instantly remove its background. Sign up to replace it with colors, gradients, images, or text.</p>
+  </div>
+
+  <div class="upload-zone" id="uploadZone">
+    <input type="file" id="fileInput" accept="image/*">
+    <div class="upload-placeholder">
+      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <h3>Drop an image here</h3>
+      <p>JPG, PNG, WebP &bull; Up to 20 MB</p>
+    </div>
+
+    <div class="image-display">
+      <div class="comparison" id="comparison">
+        <div class="after-wrap" id="afterWrap"><img id="afterImg" alt="Result"></div>
+        <div class="before-wrap" id="beforeWrap"><img id="beforeImg" alt="Original"></div>
+        <div class="comparison-handle" id="sliderHandle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/></svg></div>
+        <span class="label label-l">Original</span>
+        <span class="label label-r">Result</span>
+        <div class="image-loader" id="imageLoader"><div class="spinner"></div><p>Removing background…</p></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-outline" id="newBtn">New Image</button>
+        <button class="btn btn-primary" id="aiRemoveBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          AI Remove
+        </button>
+        <button class="btn btn-success" id="downloadBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+        <button class="btn" id="bgToggleBtn">Background</button>
+      </div>
+
+      <div class="bg-section" id="bgSection">
+        <div class="bg-section-header" id="bgSectionHeader">
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Background Options</h3>
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="bg-section-body" id="bgSectionBody">
+          <div class="bg-tabs">
+            <button class="bg-tab active" data-tab="solid">Solid</button>
+            <button class="bg-tab" data-tab="gradient">Gradient</button>
+            <button class="bg-tab" data-tab="url">Image URL</button>
+          </div>
+          <div class="bg-panel active" id="panel-solid">
+            <div class="fg"><label>Color</label><div class="color-row"><input type="color" id="solidColor" value="#6c5ce7"><input type="text" id="solidColorHex" value="#6c5ce7" spellcheck="false"></div></div>
+          </div>
+          <div class="bg-panel" id="panel-gradient">
+            <div class="fg"><label>Colors</label>
+              <div id="gradientColors">
+                <div class="color-row"><input type="color" class="gradColor" value="#ff7e5f"><input type="text" class="gradHex" value="#ff7e5f" spellcheck="false"></div>
+                <div class="color-row"><input type="color" class="gradColor" value="#feb47b"><input type="text" class="gradHex" value="#feb47b" spellcheck="false"></div>
+              </div>
+              <button class="add-color" id="addGradColor">+ Add Color</button>
+            </div>
+            <div class="fg"><label>Direction</label><select id="gradDirection"><option value="right">Left → Right</option><option value="top">Bottom → Top</option><option value="diagonal">Diagonal</option></select></div>
+          </div>
+          <div class="bg-panel" id="panel-url">
+            <div class="fg"><label>Background Image URL</label><input type="url" id="bgUrl" placeholder="https://example.com/bg.jpg"></div>
+          </div>
+          <div class="fg"><label>Overlay Text</label><input type="text" id="overlayText" placeholder="Your text here…"></div>
+          <div class="fg"><label>Text Color</label><div class="color-row"><input type="color" id="textColor" value="#ffffff"><input type="text" id="textColorHex" value="#ffffff" spellcheck="false"></div></div>
+          <div class="fg"><label>Text Size</label><select id="textSize"><option value="32">Small</option><option value="48" selected>Medium</option><option value="64">Large</option><option value="96">X-Large</option></select></div>
+          <button class="btn btn-primary" id="applyBgBtn" style="width:100%">Apply Background</button>
+          <div class="loading" id="composeLoading"><div class="spinner"></div><span>Composing…</span></div>
+          <div class="auth-banner" id="authBanner"><a id="authBannerLink">Sign up</a> to unlock background composition</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="close" id="closeAuth">&times;</button>
+    <h2 id="authTitle">Sign Up</h2>
+    <p class="sub" id="authSub">Create an account to unlock all features</p>
+    <div class="error" id="authError"></div>
+    <div class="fg" id="nameGroup"><label>Name</label><input type="text" id="authName" placeholder="Your name"></div>
+    <div class="fg"><label>Email</label><input type="email" id="authEmail" placeholder="you@example.com"></div>
+    <div class="fg"><label>Password</label><input type="password" id="authPassword" placeholder="At least 6 characters"></div>
+    <button class="btn btn-primary" id="authSubmit">Sign Up</button>
+    <div class="switch"><span id="authSwitchText">Already have an account?</span> <a id="authSwitchBtn">Log in</a></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<canvas id="workCanvas"></canvas>
+
+<script>
+const $ = id => document.getElementById(id);
+const S = { token: localStorage.getItem('t'), user: JSON.parse(localStorage.getItem('u') || 'null'), resultId: null };
+
+const canvas = $('workCanvas'), ctx = canvas.getContext('2d');
+const uploadZone = $('uploadZone'), fileInput = $('fileInput');
+const beforeImg = $('beforeImg'), afterImg = $('afterImg'), afterWrap = $('afterWrap'), beforeWrap = $('beforeWrap');
+const comparison = $('comparison'), sliderHandle = $('sliderHandle');
+const headerActions = $('headerActions'), imageLoader = $('imageLoader');
+let originalImage = null, originalName = '', aiRunning = false;
+let loadCounter = 0;
+
+// ─── Show result (onload BEFORE src) ───
+function showResult(url, onDone) {
+  const tag = ++loadCounter;
+  afterImg.style.opacity = '0';
+  afterImg.onload = () => {
+    if (tag !== loadCounter) return;
+    afterImg.style.opacity = '1';
+    initSlider();
+    if (onDone) onDone();
+  };
+  afterImg.onerror = () => {
+    if (tag !== loadCounter) return;
+    afterImg.style.opacity = '1';
+    toast('Image load failed', 'error');
+    if (onDone) onDone();
+  };
+  afterImg.src = url;
+}
+
+function resetState() {
+  aiRunning = false;
+  imageLoader.classList.remove('show');
+  loadCounter++;
+  afterImg.style.opacity = '1';
+  beforeWrap.style.width = '50%';
+  sliderHandle.style.left = '50%';
+}
+
+// ─── Handle file upload ───
+fileInput.onchange = e => { if (e.target.files[0]) handleFile(e.target.files[0]); };
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+
+function handleFile(file) {
+  if (!file.type.startsWith('image/')) { toast('Please select an image file', 'error'); return; }
+  originalName = file.name;
+  resetState();
+  const reader = new FileReader();
+  reader.onload = e => {
+    originalImage = new Image();
+    originalImage.onload = () => {
+      beforeImg.src = originalImage.src;
+      canvas.width = originalImage.naturalWidth;
+      canvas.height = originalImage.naturalHeight;
+      ctx.drawImage(originalImage, 0, 0);
+      uploadZone.classList.add('has-result');
+      showResult(originalImage.src, () => {
+        setTimeout(() => runAiRemoval(), 200);
+      });
+    };
+    originalImage.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── Comparison slider ───
+let sliderState = null;
+function initSlider() {
+  if (sliderState) {
+    document.removeEventListener('mousemove', sliderState.mm);
+    document.removeEventListener('mouseup', sliderState.mu);
+    document.removeEventListener('touchmove', sliderState.tm);
+    document.removeEventListener('touchend', sliderState.tu);
+  }
+  let drag = false;
+  function move(x) {
+    const r = comparison.getBoundingClientRect();
+    let p = Math.max(0, Math.min(100, ((x - r.left) / r.width) * 100));
+    beforeWrap.style.width = p + '%';
+    sliderHandle.style.left = p + '%';
+  }
+  const mm = e => { if (drag) move(e.clientX); };
+  const mu = () => { drag = false; };
+  const tm = e => { if (drag) move(e.touches[0].clientX); };
+  const tu = () => { drag = false; };
+  sliderHandle.addEventListener('mousedown', () => drag = true);
+  sliderHandle.addEventListener('touchstart', () => drag = true, {passive:true});
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+  document.addEventListener('touchmove', tm, {passive:true});
+  document.addEventListener('touchend', tu);
+  comparison.addEventListener('click', e => move(e.clientX));
+  sliderState = { mm, mu, tm, tu };
+}
+
+// ─── Actions ───
+$('newBtn').onclick = () => {
+  uploadZone.classList.remove('has-result');
+  fileInput.value = '';
+  S.resultId = null;
+  originalImage = null;
+  resetState();
+  afterImg.src = '';
+  beforeImg.src = '';
+  setTimeout(() => fileInput.click(), 100);
+};
+$('downloadBtn').onclick = () => {
+  const a = document.createElement('a');
+  if (S.resultId) a.href = '/api/output/' + S.resultId + '.png';
+  else if (afterImg.src) a.href = afterImg.src;
+  else return;
+  const base = originalName ? originalName.replace(/\.[^.]+$/, '') : 'image';
+  a.download = base + '-transparent.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+$('aiRemoveBtn').onclick = () => { if (originalImage) runAiRemoval(); };
+
+async function runAiRemoval() {
+  if (!originalImage || aiRunning) return;
+  aiRunning = true;
+  const btn = $('aiRemoveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Removing…';
+  imageLoader.classList.add('show');
+  const tag = loadCounter;
+
+  canvas.width = originalImage.naturalWidth;
+  canvas.height = originalImage.naturalHeight;
+  ctx.drawImage(originalImage, 0, 0);
+  const fd = new FormData();
+  fd.append('image', await new Promise(r => canvas.toBlob(r, 'image/png')), 'original.png');
+  const ac = new AbortController();
+  const tmo = setTimeout(() => { console.warn('[UI] Fetch timeout'); ac.abort(); }, 120000);
+  try {
+    const res = await fetch('/api/remove-bg', { method: 'POST', body: fd, signal: ac.signal });
+    clearTimeout(tmo);
+    const d = await res.json();
+    if (tag !== loadCounter) return;
+    if (!res.ok) { toast(d.e || 'Removal failed', 'error'); resetBtn(); return; }
+    S.resultId = d.id;
+    showResult(d.url, () => {
+      imageLoader.classList.remove('show');
+      resetBtn();
+      toast('Background removed!', 'success');
+    });
+  } catch(e) {
+    clearTimeout(tmo);
+    toast('Request failed: ' + e.message, 'error');
+    imageLoader.classList.remove('show');
+    resetBtn();
+  }
+  function resetBtn() { aiRunning = false; btn.disabled = false; btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> AI Remove'; }
+}
+
+// ─── Background section ───
+$('bgToggleBtn').onclick = () => { $('bgSectionBody').classList.toggle('open'); $('bgToggleBtn').textContent = $('bgSectionBody').classList.contains('open') ? 'Hide Options' : 'Background'; };
+$('bgSectionHeader').onclick = () => { $('bgSectionBody').classList.toggle('open'); $('bgToggleBtn').textContent = $('bgSectionBody').classList.contains('open') ? 'Hide Options' : 'Background'; };
+
+document.querySelectorAll('.bg-tab').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.bg-tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.bg-panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    $('panel-' + t.dataset.tab).classList.add('active');
+  };
+});
+
+document.querySelectorAll('input[type=color]').forEach(p => {
+  const t = p.nextElementSibling;
+  if (t && t.tagName === 'INPUT') {
+    p.addEventListener('input', () => t.value = p.value);
+    t.addEventListener('input', () => { if (/^#[0-9a-f]{6}$/i.test(t.value)) p.value = t.value; });
+  }
+});
+
+$('addGradColor').onclick = () => {
+  const c = $('gradientColors'), hue = c.children.length * 60 % 360;
+  const row = document.createElement('div'); row.className = 'color-row';
+  row.innerHTML = '<input type="color" class="gradColor" value="hsl('+hue+',80%,60%)"><input type="text" class="gradHex" value="" spellcheck="false"><button class="rm" onclick="this.parentElement.remove()">&times;</button>';
+  const pk = row.querySelector('.gradColor'), tx = row.querySelector('.gradHex');
+  tx.value = pk.value;
+  pk.addEventListener('input', () => tx.value = pk.value);
+  tx.addEventListener('input', () => { if (/^#[0-9a-f]{6}$/i.test(tx.value)) pk.value = tx.value; });
+  c.appendChild(row);
+};
+
+// ─── Compose ───
+$('applyBgBtn').onclick = async () => {
+  if (!S.token) { toast('Please sign in','error'); return; }
+  if (!S.resultId) { toast('Remove background first','error'); return; }
+  const cl = $('composeLoading'); cl.classList.add('show');
+  const tab = document.querySelector('.bg-tab.active');
+  const bgType = tab ? tab.dataset.tab : 'solid';
+  const body = { foregroundId: S.resultId, bgType };
+  if (bgType === 'solid') body.bgColor = $('solidColor').value;
+  else if (bgType === 'gradient') {
+    body.gradientColors = JSON.stringify([...document.querySelectorAll('.gradColor')].map(c => c.value));
+    body.gradientDirection = $('gradDirection').value;
+  } else if (bgType === 'url') body.bgUrl = $('bgUrl').value;
+  const txt = $('overlayText').value.trim();
+  if (txt) { body.text = txt; body.textColor = $('textColor').value; body.textSize = $('textSize').value; }
+  try {
+    const res = await fetch('/api/compose', {method:'POST',headers:{'Authorization':'Bearer '+S.token,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d = await res.json();
+    if (!res.ok) { toast(d.e,'error'); cl.classList.remove('show'); return; }
+    showResult(d.url, () => { cl.classList.remove('show'); });
+    toast('Background applied!','success');
+  } catch(e) { toast('Composition failed','error'); cl.classList.remove('show'); }
+};
+
+// ─── Auth ───
+function renderHeader() {
+  if (S.user) {
+    const i = (S.user.name || S.user.email)[0].toUpperCase();
+    headerActions.innerHTML = '<div class="user"><div class="av">'+i+'</div><span class="name">'+(S.user.name||S.user.email)+'</span><button class="btn btn-sm btn-ghost" onclick="logout()">Log out</button></div>';
+    $('authBanner').style.display = 'none';
+  } else {
+    headerActions.innerHTML = '<button class="btn btn-sm btn-ghost" onclick="openAuth(\'login\')">Log in</button><button class="btn btn-sm btn-primary" onclick="openAuth(\'signup\')">Sign up</button>';
+    $('authBanner').style.display = '';
+  }
+}
+
+function openAuth(m) {
+  const login = m === 'login';
+  $('authModal').classList.add('show');
+  $('authError').style.display = 'none';
+  $('authTitle').textContent = login ? 'Log In' : 'Sign Up';
+  $('authSub').textContent = login ? 'Welcome back' : 'Create an account to unlock all features';
+  $('authSubmit').textContent = login ? 'Log In' : 'Sign Up';
+  $('authSwitchText').textContent = login ? "Don't have an account?" : 'Already have an account?';
+  $('authSwitchBtn').textContent = login ? 'Sign up' : 'Log in';
+  $('nameGroup').style.display = login ? 'none' : '';
+  $('authSubmit')._mode = login ? 'login' : 'signup';
+}
+
+$('closeAuth').onclick = () => $('authModal').classList.remove('show');
+$('authModal').onclick = e => { if (e.target === $('authModal')) $('authModal').classList.remove('show'); };
+$('authSwitchBtn').onclick = () => openAuth($('authSubmit')._mode === 'login' ? 'signup' : 'login');
+$('authBannerLink').onclick = () => openAuth('signup');
+
+$('authSubmit').onclick = async function() {
+  const email = $('authEmail').value.trim(), password = $('authPassword').value;
+  if (!email||!password) { showAuthError('Fill all fields'); return; }
+  if (password.length<6) { showAuthError('Password too short'); return; }
+  const body = {email,password};
+  if (this._mode !== 'login') body.name = $('authName').value.trim()||email.split('@')[0];
+  this.disabled = true; this.textContent = 'Please wait…';
+  try {
+    const res = await fetch('/api/auth/'+(this._mode==='login'?'login':'signup'), {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d = await res.json();
+    if (!res.ok) { showAuthError(d.e); this.disabled=false; this.textContent='Try Again'; return; }
+    S.token = d.token; S.user = d.user;
+    localStorage.setItem('t', d.token); localStorage.setItem('u', JSON.stringify(d.user));
+    $('authModal').classList.remove('show');
+    renderHeader(); toast('Logged in','success');
+  } catch(e) { showAuthError('Network error'); }
+  this.disabled=false; this.textContent=this._mode==='login'?'Log In':'Sign Up';
+};
+
+function showAuthError(m) { $('authError').textContent=m; $('authError').style.display='block'; }
+function logout() { S.token=null; S.user=null; localStorage.removeItem('t'); localStorage.removeItem('u'); renderHeader(); toast('Logged out','success'); }
+
+function toast(msg, type) { const t=$('toast'); t.textContent=msg; t.className='toast '+type+' show'; setTimeout(()=>t.classList.remove('show'),3000); }
+
+renderHeader();
+</script>
+</body>
+</html>
