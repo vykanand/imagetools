@@ -208,6 +208,11 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 .resize-presets .btn{padding:5px 10px;font-size:11px}
 .info-row{display:flex;gap:16px;font-size:12px;color:var(--text-muted);margin-bottom:10px;flex-wrap:wrap}
 .info-row span{white-space:nowrap}
+.rrow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.rrow label{white-space:nowrap;min-width:88px;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
+.rrow input[type=number]{width:100px;flex:none}
+.rrow input[type=range]{flex:1}
+.rrow .rval{font-size:12px;color:var(--text-muted);min-width:45px;text-align:right;font-variant-numeric:tabular-nums}
 @media(max-width:640px){
   .header{padding:10px 16px}
   .hero h1{font-size:26px}
@@ -338,17 +343,19 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
     <div class="image-display" id="resizeDisplay" style="display:none">
       <div class="preview-box"><img id="resizePreview" alt="Preview"><span class="empty-state" id="resizeEmpty">No image loaded</span></div>
       <div class="info-row" id="resizeInfo"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="fg"><label>Width (px)</label><input type="number" id="resizeW" min="1" max="10000"></div>
-        <div class="fg"><label>Height (px)</label><input type="number" id="resizeH" min="1" max="10000"></div>
+      <div class="rrow">
+        <label>Width (px)</label>
+        <input type="number" id="resizeW" min="1" max="10000">
+        <input type="range" id="resizeWSlider" min="1" max="5000" value="100">
+        <span class="rval" id="resizeWVal"></span>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);cursor:pointer;white-space:nowrap"><input type="checkbox" id="resizeLock" checked style="accent-color:var(--accent)"> Lock</label>
-        <div style="flex:1;display:flex;align-items:center;gap:8px">
-          <input type="range" id="resizePxSlider" min="1" max="5000" value="100" style="flex:1">
-          <span id="resizePxVal" style="font-size:12px;color:var(--text-muted);min-width:50px;text-align:right;font-variant-numeric:tabular-nums"></span>
-        </div>
+      <div class="rrow">
+        <label>Height (px)</label>
+        <input type="number" id="resizeH" min="1" max="10000">
+        <input type="range" id="resizeHSlider" min="1" max="5000" value="100">
+        <span class="rval" id="resizeHVal"></span>
       </div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);cursor:pointer;margin-top:4px;margin-bottom:6px"><input type="checkbox" id="resizeLock" checked style="accent-color:var(--accent)"> Maintain aspect ratio</label>
       <div class="resize-presets" id="resizePresets"></div>
       <div style="display:flex;gap:10px;margin-top:14px">
         <button class="btn btn-primary" id="applyResizeBtn" style="flex:1">Apply Resize</button>
@@ -1001,10 +1008,14 @@ function loadResize(file) {
       $('resizeW').value = img.naturalWidth;
       $('resizeH').value = img.naturalHeight;
       const maxDim = Math.max(img.naturalWidth, img.naturalHeight);
-      const slider = $('resizePxSlider');
-      slider.min = 1; slider.max = Math.max(5000, Math.ceil(maxDim * 2 / 100) * 100);
-      slider.value = img.naturalWidth;
-      $('resizePxVal').textContent = img.naturalWidth + 'px';
+      const maxV = Math.max(5000, Math.ceil(maxDim * 2 / 100) * 100);
+      ['W','H'].forEach(a => {
+        const sl = $(`resize${a}Slider`); sl.min = 1; sl.max = maxV;
+      });
+      $('resizeWSlider').value = img.naturalWidth;
+      $('resizeWVal').textContent = img.naturalWidth + 'px';
+      $('resizeHSlider').value = img.naturalHeight;
+      $('resizeHVal').textContent = img.naturalHeight + 'px';
       $('resizeInfo').innerHTML = `<span>Original: ${img.naturalWidth}×${img.naturalHeight}px</span>`;
       updateResizePresets();
     };
@@ -1021,14 +1032,14 @@ function updateResizePresets() {
     const b = document.createElement('button');
     b.className = 'btn btn-sm btn-outline';
     b.textContent = p.name;
-    b.onclick = () => { $('resizeW').value = p.w; $('resizeH').value = p.h; const s = $('resizePxSlider'); s.value = Math.min(p.w, +s.max); $('resizePxVal').textContent = s.value + 'px'; };
+    b.onclick = () => { $('resizeW').value = p.w; $('resizeWSlider').value = Math.min(p.w, +$('resizeWSlider').max); $('resizeWVal').textContent = $('resizeWSlider').value + 'px'; $('resizeH').value = p.h; $('resizeHSlider').value = Math.min(p.h, +$('resizeHSlider').max); $('resizeHVal').textContent = $('resizeHSlider').value + 'px'; };
     c.appendChild(b);
   });
   // Original size button
   const ob = document.createElement('button');
   ob.className = 'btn btn-sm btn-outline';
   ob.textContent = `${resizeImg.naturalWidth}×${resizeImg.naturalHeight}`;
-  ob.onclick = () => { $('resizeW').value = resizeImg.naturalWidth; $('resizeH').value = resizeImg.naturalHeight; const s = $('resizePxSlider'); s.value = resizeImg.naturalWidth; $('resizePxVal').textContent = s.value + 'px'; };
+  ob.onclick = () => { $('resizeW').value = resizeImg.naturalWidth; $('resizeWSlider').value = resizeImg.naturalWidth; $('resizeWVal').textContent = resizeImg.naturalWidth + 'px'; $('resizeH').value = resizeImg.naturalHeight; $('resizeHSlider').value = resizeImg.naturalHeight; $('resizeHVal').textContent = resizeImg.naturalHeight + 'px'; };
   c.appendChild(ob);
 }
 
@@ -1037,30 +1048,48 @@ $('resizeLock').onchange = () => { resizeLocked = $('resizeLock').checked; };
 
 $('resizeW').oninput = () => {
   const w = +$('resizeW').value;
-  if (w > 0) { $('resizePxSlider').value = w; $('resizePxVal').textContent = w + 'px'; }
+  if (w > 0) { $('resizeWSlider').value = Math.min(w, +$('resizeWSlider').max); $('resizeWVal').textContent = Math.min(w, +$('resizeWSlider').max) + 'px'; }
   if (resizeLocked && resizeImg) {
     const r = resizeImg.naturalHeight / resizeImg.naturalWidth;
-    $('resizeH').value = Math.round(w * r);
+    const h = Math.round(w * r);
+    $('resizeH').value = h;
+    $('resizeHSlider').value = Math.min(h, +$('resizeHSlider').max);
+    $('resizeHVal').textContent = Math.min(h, +$('resizeHSlider').max) + 'px';
   }
 };
 $('resizeH').oninput = () => {
+  const h = +$('resizeH').value;
+  if (h > 0) { $('resizeHSlider').value = Math.min(h, +$('resizeHSlider').max); $('resizeHVal').textContent = Math.min(h, +$('resizeHSlider').max) + 'px'; }
   if (resizeLocked && resizeImg) {
     const r = resizeImg.naturalWidth / resizeImg.naturalHeight;
-    const w = Math.round($('resizeH').value * r);
+    const w = Math.round(h * r);
     $('resizeW').value = w;
-    $('resizePxSlider').value = Math.min(w, +$('resizePxSlider').max);
-    $('resizePxVal').textContent = $('resizePxSlider').value + 'px';
+    $('resizeWSlider').value = Math.min(w, +$('resizeWSlider').max);
+    $('resizeWVal').textContent = Math.min(w, +$('resizeWSlider').max) + 'px';
   }
 };
-$('resizePxSlider').oninput = () => {
-  const v = +$('resizePxSlider').value;
-  $('resizePxVal').textContent = v + 'px';
-  if (resizeImg) {
-    $('resizeW').value = v;
-    if (resizeLocked) {
-      const r = resizeImg.naturalHeight / resizeImg.naturalWidth;
-      $('resizeH').value = Math.round(v * r);
-    }
+$('resizeWSlider').oninput = () => {
+  const v = +$('resizeWSlider').value;
+  $('resizeWVal').textContent = v + 'px';
+  $('resizeW').value = v;
+  if (resizeLocked && resizeImg) {
+    const r = resizeImg.naturalHeight / resizeImg.naturalWidth;
+    const h = Math.round(v * r);
+    $('resizeH').value = h;
+    $('resizeHSlider').value = Math.min(h, +$('resizeHSlider').max);
+    $('resizeHVal').textContent = Math.min(h, +$('resizeHSlider').max) + 'px';
+  }
+};
+$('resizeHSlider').oninput = () => {
+  const v = +$('resizeHSlider').value;
+  $('resizeHVal').textContent = v + 'px';
+  $('resizeH').value = v;
+  if (resizeLocked && resizeImg) {
+    const r = resizeImg.naturalWidth / resizeImg.naturalHeight;
+    const w = Math.round(v * r);
+    $('resizeW').value = w;
+    $('resizeWSlider').value = Math.min(w, +$('resizeWSlider').max);
+    $('resizeWVal').textContent = Math.min(w, +$('resizeWSlider').max) + 'px';
   }
 };
 
@@ -1081,10 +1110,10 @@ $('applyResizeBtn').onclick = () => {
   newImg.onload = () => {
     resizeImg = newImg;
     const maxDim = Math.max(w, h);
-    const slider = $('resizePxSlider');
-    slider.min = 1; slider.max = Math.max(5000, Math.ceil(maxDim * 2 / 100) * 100);
-    slider.value = w;
-    $('resizePxVal').textContent = w + 'px';
+    const maxV = Math.max(5000, Math.ceil(maxDim * 2 / 100) * 100);
+    ['W','H'].forEach(a => { const sl = $(`resize${a}Slider`); sl.min = 1; sl.max = maxV; });
+    $('resizeWSlider').value = w; $('resizeWVal').textContent = w + 'px';
+    $('resizeHSlider').value = h; $('resizeHVal').textContent = h + 'px';
   };
   newImg.src = c.toDataURL('image/png');
   toast(`Resized to ${w}×${h}`, 'success');
