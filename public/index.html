@@ -3,23 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ImageTools — Free Background Remover, Image Resizer & Filter Online</title>
+<title>ImageFree — Free Background Remover, Image Resizer & Filter Online</title>
 <meta name="description" content="Free online image editing toolkit. Remove backgrounds with AI, resize images, apply filters. No signup required. Fast, private, and easy to use.">
 <meta name="keywords" content="background remover, image resizer, image filter, photo editor, free online tool, remove background from image, resize photo, image effects">
 <meta name="robots" content="index, follow">
-<meta name="author" content="ImageTools">
-<meta property="og:title" content="ImageTools — Free Online Image Editor: Background Remover, Resizer & Filter">
+<meta name="author" content="ImageFree">
+<meta property="og:title" content="ImageFree — Free Online Image Editor: Background Remover, Resizer & Filter">
 <meta property="og:description" content="Remove backgrounds with AI, resize images, and apply stunning filters — all free, no signup. Fast, private, and easy.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="/remove-background">
-<meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'%3E%3Crect fill='%2305050a' width='1200' height='630'/%3E%3Ctext x='600' y='300' font-family='Inter,sans-serif' font-size='56' font-weight='800' fill='%23a29bfe' text-anchor='middle'%3EImageTools%3C/text%3E%3Ctext x='600' y='370' font-family='Inter,sans-serif' font-size='24' fill='%236b6b8a' text-anchor='middle'%3EBackground Remover • Resizer • Filters%3C/text%3E%3C/svg%3E">
-<meta property="og:site_name" content="ImageTools">
+<meta property="og:url" content="/free-remove-background">
+<meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'%3E%3Crect fill='%2305050a' width='1200' height='630'/%3E%3Ctext x='600' y='300' font-family='Inter,sans-serif' font-size='56' font-weight='800' fill='%23a29bfe' text-anchor='middle'%3EImageFree%3C/text%3E%3Ctext x='600' y='370' font-family='Inter,sans-serif' font-size='24' fill='%236b6b8a' text-anchor='middle'%3EBackground Remover • Resizer • Filters%3C/text%3E%3C/svg%3E">
+<meta property="og:site_name" content="ImageFree">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ImageTools — Free Online Image Editor">
+<meta name="twitter:title" content="ImageFree — Free Online Image Editor">
 <meta name="twitter:description" content="Remove backgrounds with AI, resize images, apply filters. Free, no signup.">
-<meta name="twitter:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'%3E%3Crect fill='%2305050a' width='1200' height='630'/%3E%3Ctext x='600' y='300' font-family='Inter,sans-serif' font-size='56' font-weight='800' fill='%23a29bfe' text-anchor='middle'%3EImageTools%3C/text%3E%3Ctext x='600' y='370' font-family='Inter,sans-serif' font-size='24' fill='%236b6b8a' text-anchor='middle'%3EBackground Remover • Resizer • Filters%3C/text%3E%3C/svg%3E">
-<link rel="canonical" href="/remove-background">
-<script type="application/ld+json" id="ldJson">{"@context":"https://schema.org","@type":"WebApplication","name":"ImageTools","applicationCategory":"Multimedia","operatingSystem":"All","description":"Free online image editing toolkit: remove backgrounds with AI, resize images, apply filters."}</script>
+<meta name="twitter:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'%3E%3Crect fill='%2305050a' width='1200' height='630'/%3E%3Ctext x='600' y='300' font-family='Inter,sans-serif' font-size='56' font-weight='800' fill='%23a29bfe' text-anchor='middle'%3EImageFree%3C/text%3E%3Ctext x='600' y='370' font-family='Inter,sans-serif' font-size='24' fill='%236b6b8a' text-anchor='middle'%3EBackground Remover • Resizer • Filters%3C/text%3E%3C/svg%3E">
+<link rel="canonical" href="/free-remove-background">
+<script type="application/ld+json" id="ldJson">{"@context":"https://schema.org","@type":"WebApplication","name":"ImageFree","applicationCategory":"Multimedia","operatingSystem":"All","description":"Free online image editing toolkit: remove backgrounds with AI, resize images, apply filters."}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -84,8 +84,7 @@ body{
 .upload-zone:hover{border-color:var(--accent);background:var(--accent-bg)}
 .upload-zone.dragover{border-color:var(--accent);background:var(--accent-bg);transform:scale(1.01)}
 .upload-zone.has-result{padding:20px;border-style:solid;cursor:default}
-.upload-zone.has-result input[type=file]{display:none}
-.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-zone input[type=file]{display:none}
 .upload-icon{width:48px;height:48px;margin:0 auto 16px;color:var(--text-dim);transition:var(--transition)}
 .upload-zone:hover .upload-icon{color:var(--accent)}
 .upload-zone h3{font-size:16px;font-weight:600;margin-bottom:4px}
@@ -265,7 +264,24 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 .camera-filter-item:hover{background:var(--card-hover)}
 .camera-filter-thumb{width:64px;height:64px;border-radius:var(--radius-xs);overflow:hidden;margin:0 auto 3px;position:relative;background:var(--bg)}
 .camera-filter-thumb img,.camera-filter-thumb canvas{width:100%;height:100%;object-fit:cover;display:block}
-.camera-filter-name{font-size:10px;font-weight:600;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:640px){
+.camera-filter-name{font-size:10px;font-weight:600;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Image picker modal */
+.ip-card{display:flex;align-items:center;gap:14px;width:100%;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition);font-family:inherit;text-align:left;color:var(--text);margin-bottom:10px}
+.ip-card:hover{border-color:var(--accent);background:var(--accent-bg);transform:translateX(4px)}
+.ip-card svg{width:36px;height:36px;flex:none;color:var(--accent)}
+.ip-card .ip-txt{display:flex;flex-direction:column;gap:2px}
+.ip-card .ip-txt span{font-size:15px;font-weight:600}
+.ip-card .ip-txt small{font-size:11px;color:var(--text-muted);font-weight:400}
+.ip-camera-box{position:relative;background:var(--bg);border-radius:var(--radius-sm);overflow:hidden;aspect-ratio:4/3}
+.ip-camera-box video{width:100%;height:100%;object-fit:contain;display:none}
+.ip-camera-box video.mirror{transform:scaleX(-1)}
+.ip-camera-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--card)}
+.ip-camera-actions{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.ip-camera-actions .btn{min-width:100px}
+.ip-result-img{max-width:100%;max-height:200px;border-radius:var(--radius-xs);display:block;margin:0 auto}
+.ip-url-preview{margin-top:12px;text-align:center}
+.ip-url-preview .btn{margin-top:8px}
+@media(max-width:640px){
   .header{padding:10px 16px}
   .hero h1{font-size:26px}
   .main{padding:20px 12px 60px}
@@ -287,15 +303,15 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
   <div style="display:flex;align-items:center">
     <div class="logo"><div class="logo-mark">✦</div>Image<span>tools</span></div>
     <div class="nav" id="pageNav">
-      <a class="active" data-page="remove-background">Background</a>
-      <a data-page="background-blur">Blur</a>
-      <a data-page="selfie-filter">Selfie</a>
-      <a data-page="resize-image">Resize</a>
-      <a data-page="image-filter">Filters</a>
-      <a data-page="image-to-text-ocr-converter">OCR</a>
-      <a data-page="image-uploader">Upload</a>
-      <a data-page="online-camera">Camera</a>
-      <a data-page="api-documentation">API</a>
+      <a class="active" data-page="free-remove-background">Background</a>
+      <a data-page="free-background-blur">Blur</a>
+      <a data-page="free-selfie-filter">Selfie</a>
+      <a data-page="free-resize-image">Resize</a>
+      <a data-page="free-image-filter">Filters</a>
+      <a data-page="free-image-to-text-ocr-converter">OCR</a>
+      <a data-page="free-image-uploader">Upload</a>
+      <a data-page="free-online-camera">Camera</a>
+      <a data-page="free-api-documentation">API</a>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:0">
@@ -304,7 +320,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
   </div>
 </div>
 
-<div class="page active" id="page-remove-background">
+<div class="page active" id="page-free-remove-background">
 <div class="main">
   <div class="hero">
     <h1>Remove backgrounds.<br><span>Add anything behind.</span></h1>
@@ -390,7 +406,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 </div>
 
 <!-- ─── Page: Resize ─── -->
-<div class="page" id="page-resize-image">
+<div class="page" id="page-free-resize-image">
 <div class="main">
   <div class="hero">
     <h1>Resize images.<br><span>Scale to any size.</span></h1>
@@ -431,7 +447,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 </div>
 
 <!-- ─── Page: Filters ─── -->
-<div class="page" id="page-image-filter">
+<div class="page" id="page-free-image-filter">
 <div class="main">
   <div class="hero">
     <h1>Apply filters.<br><span>Transform with effects.</span></h1>
@@ -459,7 +475,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 </div>
 
 <!-- ─── Page: Background Blur ─── -->
-<div class="page" id="page-background-blur">
+<div class="page" id="page-free-background-blur">
 <div class="main">
   <div class="hero">
     <h1>Blur backgrounds.<br><span>Focus on the subject.</span></h1>
@@ -498,7 +514,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 </div>
 
 <!-- ─── Page: Selfie Filter ─── -->
-<div class="page" id="page-selfie-filter">
+<div class="page" id="page-free-selfie-filter">
 <div class="main">
   <div class="hero">
     <h1>Selfie filters.<br><span>Transform your look.</span></h1>
@@ -534,7 +550,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 </div>
 
 <!-- ─── Page: Image to Text OCR Converter ─── -->
-<div class="page" id="page-image-to-text-ocr-converter">
+<div class="page" id="page-free-image-to-text-ocr-converter">
 <div class="main">
   <div class="hero">
     <h1>Image to text.<br><span>Extract with OCR.</span></h1>
@@ -566,7 +582,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 </div>
 
 <!-- ─── Page: Image Uploader ─── -->
-<div class="page" id="page-image-uploader">
+<div class="page" id="page-free-image-uploader">
 <div class="main">
   <div class="hero">
     <h1>Upload images.<br><span>Get shareable links.</span></h1>
@@ -593,10 +609,10 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 </div>
 
 <!-- ─── Page: API Documentation ─── -->
-<div class="page" id="page-api-documentation">
+<div class="page" id="page-free-api-documentation">
 <div class="main">
   <div class="hero">
-    <h1>API Documentation.<br><span>Integrate ImageTools.</span></h1>
+    <h1>API Documentation.<br><span>Integrate ImageFree.</span></h1>
     <p>RESTful API for background removal, image resizing, filters, and more.</p>
   </div>
   <div class="api-section" id="apiContent" style="font-size:14px;line-height:1.7">
@@ -610,11 +626,11 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Create a new user account.</p>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
         <div style="color:var(--text-muted);margin-bottom:6px">Body (JSON):</div>
-        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">{ "email": "user@example.com", "password": "yourpassword", "name": "Optional Name" }</pre>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">{ "email": "alice@example.com", "password": "SecurePass123!", "name": "Alice Johnson" }</pre>
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
         <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
-        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/auth/signup -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"pass123"}'</pre>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/auth/signup -H "Content-Type: application/json" -d '{"email":"alice@example.com","password":"SecurePass123!","name":"Alice Johnson"}'</pre>
       </div>
     </div>
 
@@ -626,15 +642,15 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Log in and receive a JWT token.</p>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
         <div style="color:var(--text-muted);margin-bottom:6px">Body (JSON):</div>
-        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">{ "email": "user@example.com", "password": "yourpassword" }</pre>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">{ "email": "alice@example.com", "password": "SecurePass123!" }</pre>
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
         <div style="color:var(--text-muted);margin-bottom:6px">Response:</div>
-        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "token": "jwt...", "user": { "email": "...", "name": "..." } }</pre>
+        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "token": "eyJhbGciOiJIUzI1NiIs...", "user": { "email": "alice@example.com", "name": "Alice Johnson" } }</pre>
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
         <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
-        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/auth/login -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"pass123"}'</pre>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/auth/login -H "Content-Type: application/json" -d '{"email":"alice@example.com","password":"SecurePass123!"}'</pre>
       </div>
     </div>
 
@@ -650,11 +666,11 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
         <div style="color:var(--text-muted);margin-bottom:6px">Response:</div>
-        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "uuid", "url": "/api/output/uuid.png" }</pre>
+        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890", "url": "/api/output/a1b2c3d4-e5f6-7890-abcd-ef1234567890.png" }</pre>
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
         <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
-        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/remove-bg -F "image=@photo.jpg"</pre>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/remove-bg -F "image=@product-photo.jpg"</pre>
       </div>
     </div>
 
@@ -670,11 +686,11 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
         <div style="color:var(--text-muted);margin-bottom:6px">Response:</div>
-        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "uuid", "url": "/api/output/uuid.png" }</pre>
+        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901", "url": "/api/output/b2c3d4e5-f6a7-8901-bcde-f12345678901.png" }</pre>
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
         <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
-        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/background-blur -F "image=@photo.jpg" -F "blurRadius=15"</pre>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/background-blur -F "image=@wedding-portrait.jpg" -F "blurRadius=15"</pre>
       </div>
     </div>
 
@@ -690,11 +706,11 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
         <div style="color:var(--text-muted);margin-bottom:6px">Response:</div>
-        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "uuid", "url": "/api/output/uuid.png" }</pre>
+        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "c3d4e5f6-a7b8-9012-cdef-123456789012", "url": "/api/output/c3d4e5f6-a7b8-9012-cdef-123456789012.png" }</pre>
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
         <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
-        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/selfie-filter -F "image=@selfie.jpg" -F "preset=vivid"</pre>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/selfie-filter -F "image=@vacation-selfie.jpg" -F "preset=glow"</pre>
       </div>
     </div>
 
@@ -710,7 +726,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
         <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
-        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/compose -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" -d '{"foregroundId":"uuid","bgType":"gradient","gradientColors":["#ff7e5f","#feb47b"],"text":"Hello"}'</pre>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/compose -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." -H "Content-Type: application/json" -d '{"foregroundId":"a1b2c3d4-e5f6-7890-abcd-ef1234567890","bgType":"gradient","gradientColors":["#ff7e5f","#feb47b"],"text":"Summer Sale 2026"}'</pre>
       </div>
     </div>
 
@@ -726,11 +742,11 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
         <div style="color:var(--text-muted);margin-bottom:6px">Response:</div>
-        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "uuid", "url": "/api/output/uuid.png" }</pre>
+        <pre style="color:var(--success);margin:0;white-space:pre-wrap">{ "id": "d4e5f6a7-b8c9-0123-defa-234567890123", "url": "/api/output/d4e5f6a7-b8c9-0123-defa-234567890123.png" }</pre>
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
         <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
-        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/store-image -F "image=@photo.jpg"</pre>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl -X POST http://localhost:5001/api/store-image -F "image=@banner-design.png"</pre>
       </div>
     </div>
 
@@ -742,11 +758,11 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Retrieve a processed image by filename. Used to access results from any API endpoint.</p>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px;margin-bottom:8px">
         <div style="color:var(--text-muted);margin-bottom:6px">Parameter:</div>
-        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">filename: (string) e.g. "uuid.png"</pre>
+        <pre style="color:var(--accent-glow);margin:0;white-space:pre-wrap">filename: (string) e.g. "a1b2c3d4-e5f6-7890-abcd-ef1234567890.png"</pre>
       </div>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
         <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
-        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl http://localhost:5001/api/output/uuid.png --output result.png</pre>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl http://localhost:5001/api/output/a1b2c3d4-e5f6-7890-abcd-ef1234567890.png --output processed-image.png</pre>
       </div>
     </div>
 
@@ -758,7 +774,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
       <p style="color:var(--text-muted);font-size:13px;margin-bottom:10px">Get current authenticated user info. Requires JWT token in Authorization header.</p>
       <div style="background:var(--bg);border-radius:var(--radius-xs);padding:14px;font-size:12px">
         <div style="color:var(--text-muted);margin-bottom:6px">Example:</div>
-        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl http://localhost:5001/api/auth/me -H "Authorization: Bearer TOKEN"</pre>
+        <pre style="color:var(--text);margin:0;white-space:pre-wrap">curl http://localhost:5001/api/auth/me -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</pre>
       </div>
     </div>
 
@@ -770,7 +786,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 </div>
 
 <!-- ─── Page: Online Camera ─── -->
-<div class="page" id="page-online-camera">
+<div class="page" id="page-free-online-camera">
 <div class="main">
   <div class="hero">
     <h1>Selfie Camera.<br><span>Filters & effects live.</span></h1>
@@ -816,6 +832,62 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
     </div>
   </div>
 </div>
+</div>
+
+<div class="modal-overlay" id="imagePickerOverlay">
+  <div class="modal" style="padding:28px">
+    <button class="close" id="ipClose">&times;</button>
+    <h2>Add Image</h2>
+    <p class="sub">Choose how to add your image</p>
+    <!-- Step 1: Method selection -->
+    <div id="ipMethods">
+      <button class="ip-card" id="ipUploadBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div class="ip-txt"><span>Upload Photo</span><small>From gallery, files, or camera</small></div>
+      </button>
+      <button class="ip-card" id="ipCamOpenBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <div class="ip-txt"><span>Use Camera</span><small>Take a photo with your webcam</small></div>
+      </button>
+      <button class="ip-card" id="ipUrlOpenBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        <div class="ip-txt"><span>From URL</span><small>Paste an image link</small></div>
+      </button>
+    </div>
+    <!-- Step 2: Camera -->
+    <div id="ipCamera" style="display:none">
+      <div class="ip-camera-box">
+        <video id="ipVideo" autoplay playsinline muted></video>
+        <div class="ip-camera-placeholder" id="ipCamPlaceholder">
+          <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <p style="font-size:13px;color:var(--text-muted)">Camera access required</p>
+          <button class="btn btn-primary" id="ipCamStartBtn">Start Camera</button>
+        </div>
+      </div>
+      <div class="ip-camera-actions" id="ipCamActions" style="display:none">
+        <button class="btn btn-outline" id="ipCamBack">Back</button>
+        <button class="camera-capture-btn" id="ipCaptureBtn" style="width:56px;height:56px;border-width:3px"></button>
+      </div>
+      <div class="ip-camera-actions" id="ipCamResult" style="display:none">
+        <img class="ip-result-img" id="ipCamResultImg">
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-outline" id="ipCamRetake" style="flex:1">Retake</button>
+          <button class="btn btn-success" id="ipCamUse" style="flex:1">Use Photo</button>
+        </div>
+      </div>
+    </div>
+    <!-- Step 3: URL -->
+    <div id="ipUrl" style="display:none">
+      <div class="fg"><label>Image URL</label><input type="url" id="ipUrlInput" placeholder="https://example.com/photo.jpg"></div>
+      <div class="error" id="ipUrlError"></div>
+      <button class="btn btn-primary" id="ipUrlLoadBtn">Load Image</button>
+      <button class="btn btn-outline" id="ipUrlBack">Back</button>
+      <div class="ip-url-preview" id="ipUrlPreview" style="display:none">
+        <img class="ip-result-img" id="ipUrlPreviewImg">
+        <button class="btn btn-success" id="ipUrlUseBtn">Use This Image</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="authModal">
@@ -876,8 +948,89 @@ function resetState() {
   sliderHandle.style.left = '50%';
 }
 
+// ─── Global hidden file input for image picker ───
+const pickerFileInput = document.createElement('input');
+pickerFileInput.type = 'file'; pickerFileInput.accept = 'image/*'; pickerFileInput.multiple = true;
+pickerFileInput.style.display = 'none'; document.body.appendChild(pickerFileInput);
+let pickerCallback = null, pickerCamStream = null, pickerCamCapture = null, pickerUrlBlob = null;
+function showImagePicker(cb) {
+  pickerCallback = cb; pickerCamCapture = null; pickerUrlBlob = null;
+  $('ipUrlInput').value = ''; $('ipUrlError').style.display = 'none'; $('ipUrlPreview').style.display = 'none';
+  stopPickerCam(); showPickerStep('methods'); $('imagePickerOverlay').classList.add('show');
+}
+function showPickerStep(s) {
+  ['ipMethods','ipCamera','ipUrl'].forEach(id => $(id).style.display = 'none');
+  const map = {methods:'ipMethods',camera:'ipCamera',url:'ipUrl'};
+  $(map[s]||'ipMethods').style.display = 'block';
+  if (s !== 'camera') stopPickerCam();
+}
+function stopPickerCam() {
+  if (pickerCamStream) { pickerCamStream.getTracks().forEach(t => t.stop()); pickerCamStream = null; }
+  $('ipVideo').srcObject = null; $('ipVideo').style.display = 'none';
+  $('ipCamPlaceholder').style.display = 'flex'; $('ipCamActions').style.display = 'none'; $('ipCamResult').style.display = 'none';
+}
+function closePicker() {
+  $('imagePickerOverlay').classList.remove('show'); stopPickerCam(); pickerCallback = null;
+}
+$('ipClose').onclick = closePicker;
+$('imagePickerOverlay').addEventListener('click', e => { if (e.target === $('imagePickerOverlay')) closePicker(); });
+// Method 1: Upload from device
+pickerFileInput.onchange = e => {
+  if (e.target.files[0]) {
+    const cb = pickerCallback; closePicker();
+    if (cb) cb(e.target.files[0]);
+    pickerFileInput.value = '';
+  }
+};
+$('ipUploadBtn').onclick = () => pickerFileInput.click();
+// Method 2: Camera
+$('ipCamOpenBtn').onclick = () => showPickerStep('camera');
+$('ipCamStartBtn').onclick = async () => {
+  try {
+    const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } });
+    pickerCamStream = s; $('ipVideo').srcObject = s; $('ipVideo').style.display = 'block';
+    $('ipVideo').classList.add('mirror'); $('ipCamPlaceholder').style.display = 'none'; $('ipCamActions').style.display = 'flex';
+  } catch(e) { toast('Camera access denied: ' + e.message, 'error'); }
+};
+$('ipCaptureBtn').onclick = () => {
+  const v = $('ipVideo'); const c = document.createElement('canvas');
+  c.width = v.videoWidth || 1280; c.height = v.videoHeight || 720;
+  const cx = c.getContext('2d'); cx.scale(-1,1); cx.drawImage(v, -c.width, 0);
+  c.toBlob(b => { pickerCamCapture = b; $('ipCamActions').style.display = 'none'; $('ipCamResultImg').src = URL.createObjectURL(b); $('ipCamResult').style.display = 'block'; }, 'image/png');
+};
+$('ipCamBack').onclick = () => showPickerStep('methods');
+$('ipCamRetake').onclick = () => { pickerCamCapture = null; $('ipCamResult').style.display = 'none'; $('ipCamActions').style.display = 'flex'; };
+$('ipCamUse').onclick = () => { const cb = pickerCallback; closePicker(); if (cb && pickerCamCapture) cb(new File([pickerCamCapture], 'camera.png', { type: 'image/png' })); };
+// Method 3: URL
+$('ipUrlOpenBtn').onclick = () => showPickerStep('url');
+$('ipUrlBack').onclick = () => showPickerStep('methods');
+$('ipUrlLoadBtn').onclick = loadPickerUrl;
+$('ipUrlInput').addEventListener('keydown', e => { if (e.key === 'Enter') loadPickerUrl(); });
+async function loadPickerUrl() {
+  const url = $('ipUrlInput').value.trim();
+  if (!url) return; $('ipUrlError').style.display = 'none'; $('ipUrlPreview').style.display = 'none';
+  try {
+    const resp = await fetch(url, { mode: 'cors' });
+    if (!resp.ok) throw new Error('Server returned ' + resp.status);
+    const blob = await resp.blob();
+    if (!blob.type.startsWith('image/')) throw new Error('URL is not an image');
+    pickerUrlBlob = blob; $('ipUrlPreviewImg').src = URL.createObjectURL(blob); $('ipUrlPreview').style.display = 'block';
+  } catch(e) { $('ipUrlError').textContent = 'Failed: ' + e.message; $('ipUrlError').style.display = 'block'; }
+}
+$('ipUrlUseBtn').onclick = () => { const cb = pickerCallback; closePicker(); if (cb && pickerUrlBlob) { const ext = pickerUrlBlob.type.split('/')[1]||'png'; cb(new File([pickerUrlBlob], 'url.' + ext, { type: pickerUrlBlob.type })); } };
+
+// ─── Helper: wire upload zone to image picker ───
+function wirePicker(zoneId, handler) {
+  const z = $(zoneId); if (!z) return;
+  const fi = z.querySelector('input[type=file]'); if (fi) fi.style.display = 'none';
+  z.addEventListener('click', e => {
+    if (z.classList.contains('has-result') || e.target.closest('button,.btn,.actions,.image-display,.comparison,.bg-section,.camera-filters,.share-row')) return;
+    showImagePicker(handler);
+  });
+}
+
 // ─── Handle file upload ───
-fileInput.onchange = e => { if (e.target.files[0]) handleFile(e.target.files[0]); };
+wirePicker('uploadZone', handleFile);
 uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
 uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
 uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
@@ -943,7 +1096,7 @@ $('newBtn').onclick = () => {
   resetState();
   afterImg.src = '';
   beforeImg.src = '';
-  setTimeout(() => fileInput.click(), 100);
+  setTimeout(() => showImagePicker(handleFile), 100);
 };
 $('downloadBtn').onclick = () => {
   const a = document.createElement('a');
@@ -955,7 +1108,7 @@ $('downloadBtn').onclick = () => {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  buildShareRow('bgShare', 'remove-background');
+  buildShareRow('bgShare', 'free-remove-background');
 };
 
 $('aiRemoveBtn').onclick = () => { if (originalImage) runAiRemoval(); };
@@ -1400,62 +1553,62 @@ const SHARE_PLATFORMS = [
   {id:'twitter',icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>'}
 ];
 const PAGE_DESCS = {
-  'remove-background': 'Remove backgrounds from photos instantly using AI. Free online tool — no signup required.',
-  'resize-image': 'Resize images to any dimensions for free. Maintain aspect ratio, choose presets, download in one click.',
-  'image-filter': 'Apply filters to your images: brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation.',
-  'background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create portrait mode effects instantly.',
-  'selfie-filter': 'Apply stunning filter presets to your selfies: glow, vintage, B&W, vivid, and more.',
-  'image-uploader': 'Upload images and get instant shareable URLs for free. Drag and drop, copy links, manage uploads.',
-  'image-to-text-ocr-converter': 'Extract text from images instantly with free online OCR. Upload a photo or screenshot and convert image to text.',
-  'online-camera': 'Use your device camera to take photos online for free. Capture, apply effects, download and share.',
-  'api-documentation': 'Complete API documentation for ImageTools. Background removal, image processing, and more.'
+  'free-remove-background': 'Remove backgrounds from photos instantly using AI. Free online tool — no signup required.',
+  'free-resize-image': 'Resize images to any dimensions for free. Maintain aspect ratio, choose presets, download in one click.',
+  'free-image-filter': 'Apply filters to your images: brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation.',
+  'free-background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create portrait mode effects instantly.',
+  'free-selfie-filter': 'Apply stunning filter presets to your selfies: glow, vintage, B&W, vivid, and more.',
+  'free-image-uploader': 'Upload images and get instant shareable URLs for free. Drag and drop, copy links, manage uploads.',
+  'free-image-to-text-ocr-converter': 'Extract text from images instantly with free online OCR. Upload a photo or screenshot and convert image to text.',
+  'free-online-camera': 'Use your device camera to take photos online for free. Capture, apply effects, download and share.',
+  'free-api-documentation': 'Complete API documentation for ImageFree. Background removal, image processing, and more.'
 };
 
 const BASE = window.location.origin;
 const PAGE_TITLES = {
-  'remove-background': 'Free AI Background Remover — Remove Image Background Online | ImageTools',
-  'resize-image': 'Free Image Resizer — Resize Photos Online Instantly | ImageTools',
-  'image-filter': 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools',
-  'background-blur': 'Free Background Blur Tool — Blur Photo Background Online | ImageTools',
-  'selfie-filter': 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageTools',
-  'image-uploader': 'Free Image Uploader — Upload & Share Images Online | ImageTools',
-  'image-to-text-ocr-converter': 'Free Image to Text OCR Converter — Extract Text from Images Online | ImageTools',
-  'online-camera': 'Free Online Camera — Take Photos with Webcam | ImageTools',
-  'api-documentation': 'ImageTools API Documentation — Developer Guide | ImageTools'
+  'free-remove-background': 'Free AI Background Remover — Remove Image Background Online | ImageFree',
+  'free-resize-image': 'Free Image Resizer — Resize Photos Online Instantly | ImageFree',
+  'free-image-filter': 'Free Image Filter Editor — Apply Photo Effects Online | ImageFree',
+  'free-background-blur': 'Free Background Blur Tool — Blur Photo Background Online | ImageFree',
+  'free-selfie-filter': 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageFree',
+  'free-image-uploader': 'Free Image Uploader — Upload & Share Images Online | ImageFree',
+  'free-image-to-text-ocr-converter': 'Free Image to Text OCR Converter — Extract Text from Images Online | ImageFree',
+  'free-online-camera': 'Free Online Camera — Take Photos with Webcam | ImageFree',
+  'free-api-documentation': 'ImageFree API Documentation — Developer Guide | ImageFree'
 };
 const PAGE_DESCS_LONG = {
-  'remove-background': 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.',
-  'resize-image': 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.',
-  'image-filter': 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.',
-  'background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create beautiful portrait mode effects online for free. Adjustable blur intensity, instant download. No signup required.',
-  'selfie-filter': 'Apply stunning selfie filter presets to your photos online for free. Glow, vintage, B&W, vivid and more. One-click download, no signup required.',
-  'image-uploader': 'Upload images and get instant shareable URLs for free. Drag-and-drop upload, copy links, manage uploads. Fast, private, no signup required.',
-  'image-to-text-ocr-converter': 'Extract text from images instantly with our free online OCR converter. Upload a photo or screenshot and convert image to text. Accurate, fast, no signup required.',
-  'online-camera': 'Use your device camera to take photos online for free. Capture with webcam, apply real-time filters, download and share. No signup required, works in your browser.',
-  'api-documentation': 'Complete API documentation for ImageTools. Background removal, image resizing, filters, and more. Integrate AI image processing into your apps with simple REST endpoints.'
+  'free-remove-background': 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.',
+  'free-resize-image': 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.',
+  'free-image-filter': 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.',
+  'free-background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create beautiful portrait mode effects online for free. Adjustable blur intensity, instant download. No signup required.',
+  'free-selfie-filter': 'Apply stunning selfie filter presets to your photos online for free. Glow, vintage, B&W, vivid and more. One-click download, no signup required.',
+  'free-image-uploader': 'Upload images and get instant shareable URLs for free. Drag-and-drop upload, copy links, manage uploads. Fast, private, no signup required.',
+  'free-image-to-text-ocr-converter': 'Extract text from images instantly with our free online OCR converter. Upload a photo or screenshot and convert image to text. Accurate, fast, no signup required.',
+  'free-online-camera': 'Use your device camera to take photos online for free. Capture with webcam, apply real-time filters, download and share. No signup required, works in your browser.',
+  'free-api-documentation': 'Complete API documentation for ImageFree. Background removal, image resizing, filters, and more. Integrate AI image processing into your apps with simple REST endpoints.'
 };
 const PAGE_KEYWORDS = {
-  'remove-background': 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker',
-  'resize-image': 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool',
-  'image-filter': 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online',
-  'background-blur': 'background blur, blur photo background, portrait mode, AI subject detection, blur background online',
-  'selfie-filter': 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online, photo editor',
-  'image-uploader': 'image uploader, upload photos online, image hosting, share image link, drag and drop upload',
-  'image-to-text-ocr-converter': 'image to text converter, OCR online, extract text from image, image to text OCR, photo to text, optical character recognition, free OCR tool',
-  'online-camera': 'online camera, webcam photo, take photo online, camera capture, webcam selfie, browser camera',
-  'api-documentation': 'API documentation, image processing API, background removal API, developer guide, REST API'
+  'free-remove-background': 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker',
+  'free-resize-image': 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool',
+  'free-image-filter': 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online',
+  'free-background-blur': 'background blur, blur photo background, portrait mode, AI subject detection, blur background online',
+  'free-selfie-filter': 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online, photo editor',
+  'free-image-uploader': 'image uploader, upload photos online, image hosting, share image link, drag and drop upload',
+  'free-image-to-text-ocr-converter': 'image to text converter, OCR online, extract text from image, image to text OCR, photo to text, optical character recognition, free OCR tool',
+  'free-online-camera': 'online camera, webcam photo, take photo online, camera capture, webcam selfie, browser camera',
+  'free-api-documentation': 'API documentation, image processing API, background removal API, developer guide, REST API'
 };
 
 function pageUrl(page) { return BASE + '/' + page; }
 function shareText(pageId) {
-  const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background';
-  const titles = {'remove-background':'AI Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter Editor','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','online-camera':'Online Camera','api-documentation':'API Documentation'};
-  return encodeURIComponent('Remove backgrounds, blur, resize, and apply filters — all free! Check out ' + titles[p] + ' on ImageTools');
+  const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'free-remove-background';
+  const titles = {'free-remove-background':'AI Background Remover','free-resize-image':'Image Resizer','free-image-filter':'Image Filter Editor','free-background-blur':'Background Blur','free-selfie-filter':'Selfie Filter','free-image-uploader':'Image Uploader','free-online-camera':'Online Camera','free-api-documentation':'API Documentation'};
+  return encodeURIComponent('Remove backgrounds, blur, resize, and apply filters — all free! Check out ' + titles[p] + ' on ImageFree');
 }
-function shareUrl(pageId) { return encodeURIComponent(pageUrl(pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background')); }
+function shareUrl(pageId) { return encodeURIComponent(pageUrl(pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'free-remove-background')); }
 
 function shareTo(platform, pageId) {
-  const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background';
+  const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'free-remove-background';
   const txt = shareText(p), url = shareUrl(p);
   const links = {
     whatsapp: `https://wa.me/?text=${txt}%20${url}`,
@@ -1497,15 +1650,15 @@ function switchPage(page, push) {
   // Update URL with pushState (skip on popstate to avoid loop)
   if (push !== false && window.location.pathname !== '/' + page) history.pushState({page}, '', '/' + page);
   // Meta tags
-  const name = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','online-camera':'Online Camera','api-documentation':'API Documentation'}[page] || 'ImageTools';
-  document.title = PAGE_TITLES[page] || 'ImageTools — Free Online Image Editor';
+  const name = {'free-remove-background':'Background Remover','free-resize-image':'Image Resizer','free-image-filter':'Image Filter','free-background-blur':'Background Blur','free-selfie-filter':'Selfie Filter','free-image-uploader':'Image Uploader','free-online-camera':'Online Camera','free-api-documentation':'API Documentation'}[page] || 'ImageFree';
+  document.title = PAGE_TITLES[page] || 'ImageFree — Free Online Image Editor';
   const setMeta = (sel, val) => { const el = document.querySelector(sel); if (el) el.content = val; };
   setMeta('meta[name="description"]', PAGE_DESCS_LONG[page]);
   setMeta('meta[name="keywords"]', PAGE_KEYWORDS[page]);
-  setMeta('meta[property="og:title"]', 'ImageTools — Free ' + name + ' Online');
+  setMeta('meta[property="og:title"]', 'ImageFree — Free ' + name + ' Online');
   setMeta('meta[property="og:description"]', PAGE_DESCS_LONG[page]);
   setMeta('meta[property="og:url"]', pageUrl(page));
-  setMeta('meta[name="twitter:title"]', 'ImageTools — Free ' + name + ' Online');
+  setMeta('meta[name="twitter:title"]', 'ImageFree — Free ' + name + ' Online');
   setMeta('meta[name="twitter:description"]', PAGE_DESCS_LONG[page]);
   const can = document.querySelector('link[rel="canonical"]'); if (can) can.href = pageUrl(page);
   // JSON-LD
@@ -1522,10 +1675,10 @@ function switchPage(page, push) {
   // OG image with tool-specific text
   const ogImg = document.querySelector('meta[property="og:image"]');
   if (ogImg) {
-    const label = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter','image-uploader':'Image Uploader','online-camera':'Online Camera','api-documentation':'API Documentation'}[page] || 'ImageTools';
-    ogImg.content = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"><rect fill="#05050a" width="1200" height="630"/><text x="600" y="280" font-family="Inter,sans-serif" font-size="64" font-weight="800" fill="#a29bfe" text-anchor="middle">ImageTools</text><text x="600" y="360" font-family="Inter,sans-serif" font-size="32" fill="#6c5ce7" text-anchor="middle">${label}</text><text x="600" y="410" font-family="Inter,sans-serif" font-size="20" fill="#6b6b8a" text-anchor="middle">Free • Online • No Signup</text></svg>`);
+    const label = {'free-remove-background':'Background Remover','free-resize-image':'Image Resizer','free-image-filter':'Image Filter','free-background-blur':'Background Blur','free-selfie-filter':'Selfie Filter','free-image-uploader':'Image Uploader','free-online-camera':'Online Camera','free-api-documentation':'API Documentation'}[page] || 'ImageFree';
+    ogImg.content = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"><rect fill="#05050a" width="1200" height="630"/><text x="600" y="280" font-family="Inter,sans-serif" font-size="64" font-weight="800" fill="#a29bfe" text-anchor="middle">ImageFree</text><text x="600" y="360" font-family="Inter,sans-serif" font-size="32" fill="#6c5ce7" text-anchor="middle">${label}</text><text x="600" y="410" font-family="Inter,sans-serif" font-size="20" fill="#6b6b8a" text-anchor="middle">Free • Online • No Signup</text></svg>`);
   }
-  if (page !== 'remove-background') { imageLoader.classList.remove('show'); aiRunning = false; }
+  if (page !== 'free-remove-background') { imageLoader.classList.remove('show'); aiRunning = false; }
 }
 
 // ─── Page Navigation (pushState routing) ───
@@ -1533,13 +1686,13 @@ document.querySelectorAll('#pageNav a').forEach(a => {
   a.addEventListener('click', () => switchPage(a.dataset.page));
 });
 window.addEventListener('popstate', (e) => {
-  const page = e.state?.page || window.location.pathname.replace(/^\//,'') || 'remove-background';
+  const page = e.state?.page || window.location.pathname.replace(/^\//,'') || 'free-remove-background';
   if (document.querySelector(`#page-${page}`)) switchPage(page, false);
 });
 // Init from URL path or default
 (function initPage() {
-  const path = window.location.pathname.replace(/^\//,'') || 'remove-background';
-  switchPage(document.querySelector(`#page-${path}`) ? path : 'remove-background');
+  const path = window.location.pathname.replace(/^\//,'') || 'free-remove-background';
+  switchPage(document.querySelector(`#page-${path}`) ? path : 'free-remove-background');
 })();
 
 // ─── Resize Page ───
@@ -1550,7 +1703,7 @@ const RESIZE_PRESETS = [
   {w:400,h:300,name:'400×300'},{w:150,h:150,name:'150×150'}
 ];
 
-$('resizeFileInput').onchange = e => { if (e.target.files[0]) loadResize(e.target.files[0]); };
+wirePicker('resizeZone', loadResize);
 $('resizeZone').addEventListener('dragover', e => { e.preventDefault(); $('resizeZone').classList.add('dragover'); });
 $('resizeZone').addEventListener('dragleave', () => $('resizeZone').classList.remove('dragover'));
 $('resizeZone').addEventListener('drop', e => { e.preventDefault(); $('resizeZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadResize(e.dataTransfer.files[0]); });
@@ -1579,8 +1732,8 @@ function loadResize(file) {
       $('resizeWVal').textContent = img.naturalWidth + 'px';
       $('resizeHSlider').value = img.naturalHeight;
       $('resizeHVal').textContent = img.naturalHeight + 'px';
-      $('resizeInfo').innerHTML = `<span>Original: ${img.naturalWidth}×${img.naturalHeight}px</span>`;
       updateResizePresets();
+      renderResizePreview();
     };
     img.src = e.target.result;
   };
@@ -1595,46 +1748,33 @@ function updateResizePresets() {
     const b = document.createElement('button');
     b.className = 'btn btn-sm btn-outline';
     b.textContent = p.name;
-    b.onclick = () => { $('resizeW').value = p.w; $('resizeWSlider').value = Math.min(p.w, +$('resizeWSlider').max); $('resizeWVal').textContent = $('resizeWSlider').value + 'px'; $('resizeH').value = p.h; $('resizeHSlider').value = Math.min(p.h, +$('resizeHSlider').max); $('resizeHVal').textContent = $('resizeHSlider').value + 'px'; };
+    b.onclick = () => { $('resizeW').value = p.w; $('resizeWSlider').value = Math.min(p.w, +$('resizeWSlider').max); $('resizeWVal').textContent = $('resizeWSlider').value + 'px'; $('resizeH').value = p.h; $('resizeHSlider').value = Math.min(p.h, +$('resizeHSlider').max); $('resizeHVal').textContent = $('resizeHSlider').value + 'px'; renderResizePreview(); };
     c.appendChild(b);
   });
   // Original size button
   const ob = document.createElement('button');
   ob.className = 'btn btn-sm btn-outline';
   ob.textContent = `${resizeImg.naturalWidth}×${resizeImg.naturalHeight}`;
-  ob.onclick = () => { $('resizeW').value = resizeImg.naturalWidth; $('resizeWSlider').value = resizeImg.naturalWidth; $('resizeWVal').textContent = resizeImg.naturalWidth + 'px'; $('resizeH').value = resizeImg.naturalHeight; $('resizeHSlider').value = resizeImg.naturalHeight; $('resizeHVal').textContent = resizeImg.naturalHeight + 'px'; };
+  ob.onclick = () => { $('resizeW').value = resizeImg.naturalWidth; $('resizeWSlider').value = resizeImg.naturalWidth; $('resizeWVal').textContent = resizeImg.naturalWidth + 'px'; $('resizeH').value = resizeImg.naturalHeight; $('resizeHSlider').value = resizeImg.naturalHeight; $('resizeHVal').textContent = resizeImg.naturalHeight + 'px'; renderResizePreview(); };
   c.appendChild(ob);
 }
 
 let resizeLocked = true;
 $('resizeLock').onchange = () => { resizeLocked = $('resizeLock').checked; };
 
-$('resizeW').oninput = () => {
-  const w = +$('resizeW').value;
-  if (w > 0) { $('resizeWSlider').value = Math.min(w, +$('resizeWSlider').max); $('resizeWVal').textContent = Math.min(w, +$('resizeWSlider').max) + 'px'; }
-  if (resizeLocked && resizeImg) {
-    const r = resizeImg.naturalHeight / resizeImg.naturalWidth;
-    const h = Math.round(w * r);
-    $('resizeH').value = h;
-    $('resizeHSlider').value = Math.min(h, +$('resizeHSlider').max);
-    $('resizeHVal').textContent = Math.min(h, +$('resizeHSlider').max) + 'px';
-  }
-};
-$('resizeH').oninput = () => {
-  const h = +$('resizeH').value;
-  if (h > 0) { $('resizeHSlider').value = Math.min(h, +$('resizeHSlider').max); $('resizeHVal').textContent = Math.min(h, +$('resizeHSlider').max) + 'px'; }
-  if (resizeLocked && resizeImg) {
-    const r = resizeImg.naturalWidth / resizeImg.naturalHeight;
-    const w = Math.round(h * r);
-    $('resizeW').value = w;
-    $('resizeWSlider').value = Math.min(w, +$('resizeWSlider').max);
-    $('resizeWVal').textContent = Math.min(w, +$('resizeWSlider').max) + 'px';
-  }
-};
-$('resizeWSlider').oninput = () => {
-  const v = +$('resizeWSlider').value;
-  $('resizeWVal').textContent = v + 'px';
-  $('resizeW').value = v;
+function renderResizePreview() {
+  if (!resizeImg) return;
+  const w = +$('resizeW').value, h = +$('resizeH').value;
+  if (!w || !h || w < 1 || h < 1) return;
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  c.getContext('2d').drawImage(resizeImg, 0, 0, w, h);
+  $('resizePreview').src = c.toDataURL('image/png');
+  $('resizeInfo').innerHTML = `<span>Original: ${resizeImg.naturalWidth}\u00d7${resizeImg.naturalHeight}px</span><span>Preview: ${w}\u00d7${h}px</span>`;
+}
+
+function resizeWChange(v) {
+  if (v > 0) { $('resizeWSlider').value = Math.min(v, +$('resizeWSlider').max); $('resizeWVal').textContent = Math.min(v, +$('resizeWSlider').max) + 'px'; }
   if (resizeLocked && resizeImg) {
     const r = resizeImg.naturalHeight / resizeImg.naturalWidth;
     const h = Math.round(v * r);
@@ -1642,11 +1782,10 @@ $('resizeWSlider').oninput = () => {
     $('resizeHSlider').value = Math.min(h, +$('resizeHSlider').max);
     $('resizeHVal').textContent = Math.min(h, +$('resizeHSlider').max) + 'px';
   }
-};
-$('resizeHSlider').oninput = () => {
-  const v = +$('resizeHSlider').value;
-  $('resizeHVal').textContent = v + 'px';
-  $('resizeH').value = v;
+  renderResizePreview();
+}
+function resizeHChange(v) {
+  if (v > 0) { $('resizeHSlider').value = Math.min(v, +$('resizeHSlider').max); $('resizeHVal').textContent = Math.min(v, +$('resizeHSlider').max) + 'px'; }
   if (resizeLocked && resizeImg) {
     const r = resizeImg.naturalWidth / resizeImg.naturalHeight;
     const w = Math.round(v * r);
@@ -1654,7 +1793,13 @@ $('resizeHSlider').oninput = () => {
     $('resizeWSlider').value = Math.min(w, +$('resizeWSlider').max);
     $('resizeWVal').textContent = Math.min(w, +$('resizeWSlider').max) + 'px';
   }
-};
+  renderResizePreview();
+}
+
+$('resizeW').oninput = () => resizeWChange(+$('resizeW').value);
+$('resizeH').oninput = () => resizeHChange(+$('resizeH').value);
+$('resizeWSlider').oninput = () => { const v = +$('resizeWSlider').value; $('resizeWVal').textContent = v + 'px'; $('resizeW').value = v; resizeWChange(v); };
+$('resizeHSlider').oninput = () => { const v = +$('resizeHSlider').value; $('resizeHVal').textContent = v + 'px'; $('resizeH').value = v; resizeHChange(v); };
 
 $('applyResizeBtn').onclick = () => {
   if (!resizeImg) return;
@@ -1689,7 +1834,7 @@ $('downloadResizeBtn').onclick = () => {
   a.href = $('resizePreview').src;
   a.download = (resizeOrigName ? resizeOrigName.replace(/\.[^.]+$/,'') : 'image') + `-${w}x${h}.png`;
   a.click();
-  buildShareRow('resizeShare', 'resize-image');
+  buildShareRow('resizeShare', 'free-resize-image');
 };
 
 // ─── Filter Page ───
@@ -1704,7 +1849,7 @@ const FILTERS = [
 ];
 let filterImg = null, filterOrigName = '';
 
-$('filterFileInput').onchange = e => { if (e.target.files[0]) loadFilter(e.target.files[0]); };
+wirePicker('filterZone', loadFilter);
 $('filterZone').addEventListener('dragover', e => { e.preventDefault(); $('filterZone').classList.add('dragover'); });
 $('filterZone').addEventListener('dragleave', () => $('filterZone').classList.remove('dragover'));
 $('filterZone').addEventListener('drop', e => { e.preventDefault(); $('filterZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadFilter(e.dataTransfer.files[0]); });
@@ -1774,12 +1919,12 @@ $('downloadFilterBtn').onclick = () => {
   a.href = c.toDataURL('image/png');
   a.download = (filterOrigName ? filterOrigName.replace(/\.[^.]+$/,'') : 'image') + '-' + String(Math.floor(10000 + Math.random()*90000)) + '.png';
   a.click();
-  buildShareRow('filterShare', 'image-filter');
+  buildShareRow('filterShare', 'free-image-filter');
 };
 
 // ─── Background Blur Page ───
 let blurOrigImg = null, blurOrigName = '';
-$('blurFileInput').onchange = e => { if (e.target.files[0]) loadBlurImg(e.target.files[0]); };
+wirePicker('blurZone', loadBlurImg);
 $('blurZone').addEventListener('dragover', e => { e.preventDefault(); $('blurZone').classList.add('dragover'); });
 $('blurZone').addEventListener('dragleave', () => $('blurZone').classList.remove('dragover'));
 $('blurZone').addEventListener('drop', e => { e.preventDefault(); $('blurZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadBlurImg(e.dataTransfer.files[0]); });
@@ -1793,8 +1938,10 @@ function loadBlurImg(file) {
     img.onload = () => {
       blurOrigImg = img;
       $('blurBeforeImg').src = img.src;
+      $('blurAfterImg').src = img.src;
       $('blurDisplay').style.display = 'flex';
       $('blurZone').classList.add('has-result');
+      $('blurAfterImg').onload = () => { initBlurSlider(); };
       $('blurLoader').classList.add('show');
       runBlur(10);
     };
@@ -1809,6 +1956,15 @@ $('blurNewBtn').onclick = () => {
   $('blurFileInput').value = '';
   blurOrigImg = null;
   blurOrigName = '';
+  clearTimeout(blurTimer);
+  if (blurSliderState) {
+    document.removeEventListener('mousemove', blurSliderState.mm);
+    document.removeEventListener('mouseup', blurSliderState.mu);
+    document.removeEventListener('touchmove', blurSliderState.tm);
+    document.removeEventListener('touchend', blurSliderState.tu);
+    blurSliderState = null;
+  }
+  setTimeout(() => showImagePicker(loadBlurImg), 100);
 };
 
 let blurLoadCounter = 0;
@@ -1867,11 +2023,20 @@ function initBlurSlider() {
   blurSliderState = { mm, mu, tm, tu };
 }
 
+let blurTimer = null;
 $('blurRadiusSlider').addEventListener('input', () => {
   $('blurRadiusVal').textContent = $('blurRadiusSlider').value;
+  clearTimeout(blurTimer);
+  blurTimer = setTimeout(() => {
+    if (blurOrigImg) runBlur(+$('blurRadiusSlider').value);
+  }, 400);
+});
+$('blurRadiusSlider').addEventListener('change', () => {
+  if (blurOrigImg) { clearTimeout(blurTimer); runBlur(+$('blurRadiusSlider').value); }
 });
 $('applyBlurBtn').onclick = () => {
   if (!blurOrigImg) return;
+  clearTimeout(blurTimer);
   $('blurLoader').classList.add('show');
   runBlur(+$('blurRadiusSlider').value);
 };
@@ -1880,7 +2045,7 @@ $('downloadBlurBtn').onclick = () => {
   a.href = $('blurAfterImg').src;
   a.download = (blurOrigName ? blurOrigName.replace(/\.[^.]+$/,'') : 'image') + '-blurred.png';
   a.click();
-  buildShareRow('blurShare', 'background-blur');
+  buildShareRow('blurShare', 'free-background-blur');
 };
 
 // ─── Selfie Filter Page ───
@@ -1905,7 +2070,7 @@ const SELFIE_PREVIEW_CSS = {
   dramatic:'contrast(130%) brightness(90%) saturate(110%)'
 };
 let selfieOrigImg = null, selfieOrigName = '', selfiePresetActive = null, selfieFilterPreviews = null;
-$('selfieFileInput').onchange = e => { if (e.target.files[0]) loadSelfieImg(e.target.files[0]); };
+wirePicker('selfieZone', loadSelfieImg);
 $('selfieZone').addEventListener('dragover', e => { e.preventDefault(); $('selfieZone').classList.add('dragover'); });
 $('selfieZone').addEventListener('dragleave', () => $('selfieZone').classList.remove('dragover'));
 $('selfieZone').addEventListener('drop', e => { e.preventDefault(); $('selfieZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadSelfieImg(e.dataTransfer.files[0]); });
@@ -1962,6 +2127,7 @@ $('selfieNewBtn').onclick = () => {
   $('selfieDisplay').style.display = 'none';
   $('selfieFileInput').value = '';
   selfieOrigImg = null; selfieOrigName = ''; selfiePresetActive = null;
+  setTimeout(() => showImagePicker(loadSelfieImg), 100);
 };
 
 function buildSelfiePresets() {
@@ -1984,14 +2150,15 @@ function applySelfiePreset(id) {
   selfiePresetActive = id;
   const tag = ++selfieLoadCounter;
   document.querySelectorAll('#selfiePresets .camera-filter-item').forEach(el => {
-    const idx = SELFIE_PRESETS.findIndex(p => p.id === el.onclick ? el.dataset.preset : null);
-    el.classList.toggle('active', SELFIE_PRESETS.findIndex(p => p.id === id) === [...el.parentElement.children].indexOf(el));
-  });
-  // Actually highlight properly
-  document.querySelectorAll('#selfiePresets .camera-filter-item').forEach(el => {
     const idx = [...el.parentElement.children].indexOf(el);
     el.classList.toggle('active', SELFIE_PRESETS[idx]?.id === id);
   });
+  // Instant CSS preview on both images while server processes
+  const css = SELFIE_PREVIEW_CSS[id] || 'none';
+  $('selfieBeforeImg').style.filter = css;
+  $('selfieAfterImg').src = $('selfieBeforeImg').src;
+  $('selfieAfterImg').style.filter = css;
+  $('selfieAfterImg').onload = () => { initSelfieSlider(); };
   const ld = $('selfieLoading'); ld.classList.add('show');
   const c = document.createElement('canvas');
   c.width = selfieOrigImg.naturalWidth; c.height = selfieOrigImg.naturalHeight;
@@ -2007,7 +2174,8 @@ function applySelfiePreset(id) {
         ld.classList.remove('show');
         if (!d.url) { toast(d.e || 'Filter failed','error'); return; }
         $('selfieAfterImg').src = d.url;
-        $('selfieAfterImg').onload = () => { initSelfieSlider(); };
+        $('selfieAfterImg').style.filter = 'none';
+        $('selfieBeforeImg').style.filter = '';
         toast(SELFIE_PRESETS.find(p => p.id === id)?.label + ' filter applied!','success');
       })
       .catch(e => { if (tag === selfieLoadCounter) { ld.classList.remove('show'); toast('Filter failed: '+e.message,'error'); } });
@@ -2049,12 +2217,12 @@ $('downloadSelfieBtn').onclick = () => {
   const presetLabel = SELFIE_PRESETS.find(p => p.id === selfiePresetActive)?.label || 'filter';
   a.download = (selfieOrigName ? selfieOrigName.replace(/\.[^.]+$/,'') : 'image') + '-' + presetLabel.toLowerCase() + '.png';
   a.click();
-  buildShareRow('selfieShare', 'selfie-filter');
+  buildShareRow('selfieShare', 'free-selfie-filter');
 };
 
 // ─── Image to Text OCR Converter Page ───
 let ocrFile = null;
-$('ocrFileInput').onchange = e => { if (e.target.files[0]) loadOcrImg(e.target.files[0]); };
+wirePicker('ocrZone', loadOcrImg);
 $('ocrZone').addEventListener('dragover', e => { e.preventDefault(); $('ocrZone').classList.add('dragover'); });
 $('ocrZone').addEventListener('dragleave', () => $('ocrZone').classList.remove('dragover'));
 $('ocrZone').addEventListener('drop', e => { e.preventDefault(); $('ocrZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadOcrImg(e.dataTransfer.files[0]); });
@@ -2102,11 +2270,12 @@ $('ocrNewBtn').onclick = () => {
   $('ocrResult').style.display = 'none';
   $('ocrFileInput').value = '';
   ocrFile = null;
+  setTimeout(() => showImagePicker(loadOcrImg), 100);
 };
 
 // ─── Image Uploader Page ───
 let uploaderHistory = JSON.parse(localStorage.getItem('uploadHistory') || '[]');
-$('uploaderFileInput').onchange = e => { if (e.target.files.length) uploadFiles(e.target.files); };
+wirePicker('uploaderZone', f => uploadFiles([f]));
 $('uploaderZone').addEventListener('dragover', e => { e.preventDefault(); $('uploaderZone').classList.add('dragover'); });
 $('uploaderZone').addEventListener('dragleave', () => $('uploaderZone').classList.remove('dragover'));
 $('uploaderZone').addEventListener('drop', e => { e.preventDefault(); $('uploaderZone').classList.remove('dragover'); if (e.dataTransfer.files.length) uploadFiles(e.dataTransfer.files); });
@@ -2166,7 +2335,7 @@ function renderUploaderList() {
   });
 }
 
-$('uploaderNewBtn').onclick = () => $('uploaderFileInput').click();
+$('uploaderNewBtn').onclick = () => showImagePicker(f => uploadFiles([f]));
 $('uploaderClearBtn').onclick = () => { uploaderHistory = []; localStorage.removeItem('uploadHistory'); renderUploaderList(); toast('History cleared','success'); };
 
 // Init uploader list
@@ -2317,7 +2486,7 @@ $('cameraDownloadBtn').onclick = () => {
   const a = document.createElement('a');
   a.href = cameraCaptured; a.download = 'selfie-' + CAMERA_FILTERS[cameraFilterIdx].name.toLowerCase() + '-' + Date.now() + '.png';
   a.click();
-  buildShareRow('cameraShare', 'online-camera');
+  buildShareRow('cameraShare', 'free-online-camera');
 };
 
 // Cleanup camera when navigating away

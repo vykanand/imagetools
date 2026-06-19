@@ -11,7 +11,7 @@ const { Resvg } = require('@resvg/resvg-js');
 const { spawn } = require('child_process');
 
 const PORT = process.env.PORT || 5001;
-const JWT_SECRET = process.env.JWT_SECRET || 'imagetools-jwt-secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'imagefree-jwt-secret';
 const DATA_DIR = path.join(__dirname, 'data');
 const OUTPUT_DIR = path.join(__dirname, 'output');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
@@ -158,12 +158,12 @@ app.post('/api/background-blur', upload.single('image'), async (req, res) => {
 // ─── Selfie filter presets ───
 const SELFIE_PRESETS = {
   glow: async (img) => {
-    img.brightness(1.12).contrast(0.08);
+    img.brightness(0.12).contrast(0.08);
     return img;
   },
   warm: async (img) => {
     img.color([{ apply: 'red', params: [15] }, { apply: 'green', params: [8] }, { apply: 'blue', params: [-10] }]);
-    img.contrast(0.05).brightness(1.05);
+    img.contrast(0.05);
     return img;
   },
   vintage: async (img) => {
@@ -176,21 +176,20 @@ const SELFIE_PRESETS = {
     return img;
   },
   'soft-glam': async (img) => {
-    img.brightness(1.08).blur(1);
+    img.brightness(0.08).gaussian(1);
     return img;
   },
   vivid: async (img) => {
     img.color([{ apply: 'saturate', params: [50] }]);
-    img.contrast(0.1).brightness(1.05);
+    img.contrast(0.1).brightness(0.05);
     return img;
   },
   cool: async (img) => {
-    img.color([{ apply: 'mix', params: [{ r: 130, g: 200, b: 255 }, 12] }, { apply: 'desaturate', params: [8] }]);
-    img.contrast(0.1).brightness(1.05);
+    img.color([{ apply: 'red', params: [-10] }, { apply: 'green', params: [-5] }, { apply: 'blue', params: [15] }, { apply: 'desaturate', params: [20] }]);
     return img;
   },
   dramatic: async (img) => {
-    img.contrast(0.2).brightness(0.95);
+    img.contrast(0.2).brightness(-0.05);
     applyVignette(img, 0.35);
     return img;
   }
@@ -319,22 +318,22 @@ app.get('/api/output/:f', (req, res) => {
 
 // ─── SEO: SPA meta injection ───
 const PAGE_SEO = {
-  'remove-background': { title: 'Free AI Background Remover — Remove Image Background Online | ImageTools', desc: 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.', keywords: 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker' },
-  'resize-image': { title: 'Free Image Resizer — Resize Photos Online Instantly | ImageTools', desc: 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.', keywords: 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool' },
-  'image-filter': { title: 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools', desc: 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.', keywords: 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online' },
-  'background-blur': { title: 'Free Background Blur Tool — Blur Photo Background Online | ImageTools', desc: 'Blur photo backgrounds with AI-powered subject detection. Create beautiful portrait mode effects online for free. Adjustable blur intensity, instant download.', keywords: 'background blur, blur photo background, portrait mode, AI subject detection, blur background online' },
-  'selfie-filter': { title: 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageTools', desc: 'Apply stunning selfie filter presets to your photos. Glow, vintage, B&W, vivid and more. Free online photo filter effects with one-click download.', keywords: 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online' },
-  'image-uploader': { title: 'Free Image Uploader — Upload & Share Images Online | ImageTools', desc: 'Upload images and get instant shareable URLs for free. Drag-and-drop upload, copy links, manage uploads. Fast, private, no signup required.', keywords: 'image uploader, upload photos online, image hosting, share image link, drag and drop upload' },
-  'image-to-text-ocr-converter': { title: 'Free Image to Text OCR Converter — Extract Text from Images Online | ImageTools', desc: 'Extract text from images instantly with our free online OCR converter. Upload a photo or screenshot and convert image to text. Accurate, fast, no signup required.', keywords: 'image to text converter, OCR online, extract text from image, image to text OCR, photo to text, optical character recognition, free OCR tool' },
-  'online-camera': { title: 'Free Online Camera — Take Photos with Webcam | ImageTools', desc: 'Use your device camera to take photos online for free. Capture, apply effects, download and share. No signup required, works in your browser.', keywords: 'online camera, webcam photo, take photo online, camera capture, webcam selfie' },
-  'api-documentation': { title: 'ImageTools API Documentation — Developer Guide | ImageTools', desc: 'Complete API documentation for ImageTools. Background removal, image resizing, filters, and more. Integrate AI image processing into your apps.', keywords: 'API documentation, image processing API, background removal API, developer guide, REST API' }
+  'free-remove-background': { title: 'Free AI Background Remover — Remove Image Background Online | ImageFree', desc: 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.', keywords: 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker' },
+  'free-resize-image': { title: 'Free Image Resizer — Resize Photos Online Instantly | ImageFree', desc: 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.', keywords: 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool' },
+  'free-image-filter': { title: 'Free Image Filter Editor — Apply Photo Effects Online | ImageFree', desc: 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.', keywords: 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online' },
+  'free-background-blur': { title: 'Free Background Blur Tool — Blur Photo Background Online | ImageFree', desc: 'Blur photo backgrounds with AI-powered subject detection. Create beautiful portrait mode effects online for free. Adjustable blur intensity, instant download.', keywords: 'background blur, blur photo background, portrait mode, AI subject detection, blur background online' },
+  'free-selfie-filter': { title: 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageFree', desc: 'Apply stunning selfie filter presets to your photos. Glow, vintage, B&W, vivid and more. Free online photo filter effects with one-click download.', keywords: 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online' },
+  'free-image-uploader': { title: 'Free Image Uploader — Upload & Share Images Online | ImageFree', desc: 'Upload images and get instant shareable URLs for free. Drag-and-drop upload, copy links, manage uploads. Fast, private, no signup required.', keywords: 'image uploader, upload photos online, image hosting, share image link, drag and drop upload' },
+  'free-image-to-text-ocr-converter': { title: 'Free Image to Text OCR Converter — Extract Text from Images Online | ImageFree', desc: 'Extract text from images instantly with our free online OCR converter. Upload a photo or screenshot and convert image to text. Accurate, fast, no signup required.', keywords: 'image to text converter, OCR online, extract text from image, image to text OCR, photo to text, optical character recognition, free OCR tool' },
+  'free-online-camera': { title: 'Free Online Camera — Take Photos with Webcam | ImageFree', desc: 'Use your device camera to take photos online for free. Capture, apply effects, download and share. No signup required, works in your browser.', keywords: 'online camera, webcam photo, take photo online, camera capture, webcam selfie' },
+  'free-api-documentation': { title: 'ImageFree API Documentation — Developer Guide | ImageFree', desc: 'Complete API documentation for ImageFree. Background removal, image resizing, filters, and more. Integrate AI image processing into your apps.', keywords: 'API documentation, image processing API, background removal API, developer guide, REST API' }
 };
-const PAGE_NAMES = { 'remove-background': 'Background Remover', 'resize-image': 'Image Resizer', 'image-filter': 'Image Filter Editor', 'background-blur': 'Background Blur', 'selfie-filter': 'Selfie Filter', 'image-to-text-ocr-converter': 'Image to Text OCR Converter', 'image-uploader': 'Image Uploader', 'online-camera': 'Online Camera', 'api-documentation': 'API Documentation' };
+const PAGE_NAMES = { 'free-remove-background': 'Background Remover', 'free-resize-image': 'Image Resizer', 'free-image-filter': 'Image Filter Editor', 'free-background-blur': 'Background Blur', 'free-selfie-filter': 'Selfie Filter', 'free-image-to-text-ocr-converter': 'Image to Text OCR Converter', 'free-image-uploader': 'Image Uploader', 'free-online-camera': 'Online Camera', 'free-api-documentation': 'API Documentation' };
 
 // SPA routes — inject SEO meta and serve index.html
-app.get(['/remove-background','/resize-image','/image-filter','/background-blur','/selfie-filter','/image-to-text-ocr-converter','/image-uploader','/online-camera','/api-documentation'], (req, res) => {
+app.get(['/free-remove-background','/free-resize-image','/free-image-filter','/free-background-blur','/free-selfie-filter','/free-image-to-text-ocr-converter','/free-image-uploader','/free-online-camera','/free-api-documentation'], (req, res) => {
   const page = req.path.slice(1);
-  const s = PAGE_SEO[page] || PAGE_SEO['remove-background'];
+  const s = PAGE_SEO[page] || PAGE_SEO['free-remove-background'];
   const base = req.protocol + '://' + req.get('host');
   const fp = path.join(__dirname, 'public', 'index.html');
   if (!fs.existsSync(fp)) return res.status(404).end();
@@ -343,7 +342,7 @@ app.get(['/remove-background','/resize-image','/image-filter','/background-blur'
     .replace(/<title>[^<]*<\/title>/, `<title>${s.title}</title>`)
     .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${s.desc}">`)
     .replace(/<meta name="keywords"[^>]*>/, `<meta name="keywords" content="${s.keywords}">`)
-    .replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="ImageTools — Free ${PAGE_NAMES[page]} Online">`)
+    .replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="ImageFree — Free ${PAGE_NAMES[page]} Online">`)
     .replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${s.desc}">`)
     .replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${base}/${page}">`)
     .replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${base}/${page}">`);
@@ -358,8 +357,8 @@ app.get('/robots.txt', (req, res) => {
 // Sitemap.xml
 app.get('/sitemap.xml', (req, res) => {
   const host = req.protocol + '://' + req.get('host');
-  const pages = ['remove-background','resize-image','image-filter','background-blur','selfie-filter','image-to-text-ocr-converter','image-uploader','online-camera','api-documentation'];
-  const urls = pages.map(p => `  <url><loc>${host}/${p}</loc><changefreq>weekly</changefreq><priority>${p === 'remove-background' ? '1.0' : '0.8'}</priority></url>`).join('\n');
+  const pages = ['free-remove-background','free-resize-image','free-image-filter','free-background-blur','free-selfie-filter','free-image-to-text-ocr-converter','free-image-uploader','free-online-camera','free-api-documentation'];
+  const urls = pages.map(p => `  <url><loc>${host}/${p}</loc><changefreq>weekly</changefreq><priority>${p === 'free-remove-background' ? '1.0' : '0.8'}</priority></url>`).join('\n');
   res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`);
 });
 
