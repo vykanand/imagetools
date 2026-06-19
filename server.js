@@ -119,6 +119,111 @@ app.post('/api/store-image', upload.single('image'), async (req, res) => {
   }
 });
 
+// ─── API: Background Blur ───
+app.post('/api/background-blur', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ e: 'No image uploaded' });
+    const blurRadius = Math.min(30, Math.max(1, parseInt(req.body.blurRadius) || 10));
+    const id = crypto.randomUUID(), out = path.join(OUTPUT_DIR, `${id}.png`);
+    const fgPath = path.join(OUTPUT_DIR, `fg_${id}.png`);
+    // Run silueta to get transparent foreground
+    await new Promise((resolve, reject) => {
+      const py = spawn('python', [path.join(__dirname, 'removebg.py'), req.file.path, fgPath]);
+      let stderr = '';
+      py.stdout.on('data', d => console.log('[Python]', d.toString().trim()));
+      py.stderr.on('data', d => { stderr += d; });
+      const timeout = setTimeout(() => { py.kill(); reject(new Error('Python timed out')); }, 120000);
+      py.on('close', code => {
+        clearTimeout(timeout);
+        if (code === 0) resolve();
+        else reject(new Error(stderr.trim() || `Python exit ${code}`));
+      });
+      py.on('error', reject);
+    });
+    // Load original and foreground, blur original, composite sharp fg over blurred bg
+    const orig = await jimp.Jimp.read(req.file.path);
+    const fg = await jimp.Jimp.read(fgPath);
+    const blurred = orig.clone().gaussian(blurRadius);
+    blurred.composite(fg, 0, 0);
+    await blurred.write(out);
+    fs.unlink(req.file.path, () => {});
+    fs.unlink(fgPath, () => {});
+    res.json({ id, url: `/api/output/${id}.png` });
+  } catch (e) {
+    if (req.file) fs.unlink(req.file.path, () => {});
+    res.status(500).json({ e: 'Background blur failed: ' + e.message });
+  }
+});
+
+// ─── Selfie filter presets ───
+const SELFIE_PRESETS = {
+  glow: async (img) => {
+    img.brightness(0.12).contrast(0.08);
+    return img;
+  },
+  warm: async (img) => {
+    img.color([{ apply: 'mix', params: ['#ff9922', 12] }]);
+    img.contrast(0.05);
+    return img;
+  },
+  vintage: async (img) => {
+    img.sepia().contrast(0.1);
+    applyVignette(img, 0.3);
+    return img;
+  },
+  'bw-classic': async (img) => {
+    img.greyscale().contrast(0.15);
+    return img;
+  },
+  'soft-glam': async (img) => {
+    img.brightness(0.08).gaussian(0.8);
+    return img;
+  },
+  vivid: async (img) => {
+    img.color([{ apply: 'saturate', params: [50] }]);
+    img.contrast(0.1).brightness(0.05);
+    return img;
+  },
+  cool: async (img) => {
+    img.color([{ apply: 'mix', params: ['#4488ff', 10] }, { apply: 'desaturate', params: [20] }]);
+    return img;
+  },
+  dramatic: async (img) => {
+    img.contrast(0.2).brightness(-0.05);
+    applyVignette(img, 0.35);
+    return img;
+  }
+};
+function applyVignette(image, amount) {
+  const w = image.bitmap.width, h = image.bitmap.height;
+  const cx = w / 2, cy = h / 2, maxDist = Math.sqrt(cx * cx + cy * cy);
+  image.scan(0, 0, w, h, function (x, y, idx) {
+    const dist = Math.sqrt(Math.pow(x - cx, 2) + Math.pow(y - cy, 2));
+    const factor = Math.min(1, dist / maxDist);
+    const darken = factor * amount;
+    this.bitmap.data[idx] = Math.round(this.bitmap.data[idx] * (1 - darken));
+    this.bitmap.data[idx + 1] = Math.round(this.bitmap.data[idx + 1] * (1 - darken));
+    this.bitmap.data[idx + 2] = Math.round(this.bitmap.data[idx + 2] * (1 - darken));
+  });
+}
+
+app.post('/api/selfie-filter', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ e: 'No image uploaded' });
+    const preset = req.body.preset || 'vivid';
+    if (!SELFIE_PRESETS[preset]) return res.status(400).json({ e: 'Unknown preset' });
+    const id = crypto.randomUUID(), out = path.join(OUTPUT_DIR, `${id}.png`);
+    const img = await jimp.Jimp.read(req.file.path);
+    await SELFIE_PRESETS[preset](img);
+    await img.write(out);
+    fs.unlink(req.file.path, () => {});
+    res.json({ id, url: `/api/output/${id}.png` });
+  } catch (e) {
+    if (req.file) fs.unlink(req.file.path, () => {});
+    res.status(500).json({ e: 'Selfie filter failed: ' + e.message });
+  }
+});
+
 // ─── Composition ───
 app.post('/api/compose', auth, (req, res, next) => {
   if (req.is('multipart/form-data')) return upload.single('foreground')(req, res, next);
@@ -215,12 +320,14 @@ app.get('/api/output/:f', (req, res) => {
 const PAGE_SEO = {
   'remove-background': { title: 'Free AI Background Remover — Remove Image Background Online | ImageTools', desc: 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.', keywords: 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker' },
   'resize-image': { title: 'Free Image Resizer — Resize Photos Online Instantly | ImageTools', desc: 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.', keywords: 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool' },
-  'image-filter': { title: 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools', desc: 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.', keywords: 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online' }
+  'image-filter': { title: 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools', desc: 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.', keywords: 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online' },
+  'background-blur': { title: 'Free Background Blur Tool — Blur Photo Background Online | ImageTools', desc: 'Blur photo backgrounds with AI-powered subject detection. Create beautiful portrait mode effects online for free. Adjustable blur intensity, instant download.', keywords: 'background blur, blur photo background, portrait mode, AI subject detection, blur background online' },
+  'selfie-filter': { title: 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageTools', desc: 'Apply stunning selfie filter presets to your photos. Glow, vintage, B&W, vivid and more. Free online photo filter effects with one-click download.', keywords: 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online' }
 };
-const PAGE_NAMES = { 'remove-background': 'Background Remover', 'resize-image': 'Image Resizer', 'image-filter': 'Image Filter Editor' };
+const PAGE_NAMES = { 'remove-background': 'Background Remover', 'resize-image': 'Image Resizer', 'image-filter': 'Image Filter Editor', 'background-blur': 'Background Blur', 'selfie-filter': 'Selfie Filter' };
 
 // SPA routes — inject SEO meta and serve index.html
-app.get(['/remove-background','/resize-image','/image-filter'], (req, res) => {
+app.get(['/remove-background','/resize-image','/image-filter','/background-blur','/selfie-filter'], (req, res) => {
   const page = req.path.slice(1);
   const s = PAGE_SEO[page] || PAGE_SEO['remove-background'];
   const base = req.protocol + '://' + req.get('host');
@@ -246,7 +353,7 @@ app.get('/robots.txt', (req, res) => {
 // Sitemap.xml
 app.get('/sitemap.xml', (req, res) => {
   const host = req.protocol + '://' + req.get('host');
-  const pages = ['remove-background','resize-image','image-filter'];
+  const pages = ['remove-background','resize-image','image-filter','background-blur','selfie-filter'];
   const urls = pages.map(p => `  <url><loc>${host}/${p}</loc><changefreq>weekly</changefreq><priority>${p === 'remove-background' ? '1.0' : '0.8'}</priority></url>`).join('\n');
   res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`);
 });

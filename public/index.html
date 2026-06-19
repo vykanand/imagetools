@@ -262,6 +262,8 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
     <div class="logo"><div class="logo-mark">✦</div>Image<span>tools</span></div>
     <div class="nav" id="pageNav">
       <a class="active" data-page="remove-background">Background</a>
+      <a data-page="background-blur">Blur</a>
+      <a data-page="selfie-filter">Selfie</a>
       <a data-page="resize-image">Resize</a>
       <a data-page="image-filter">Filters</a>
     </div>
@@ -421,6 +423,81 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
         <button class="btn btn-success" id="downloadFilterBtn" style="flex:1">Download</button>
       </div>
       <div class="share-row" id="filterShare" style="display:none"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ─── Page: Background Blur ─── -->
+<div class="page" id="page-background-blur">
+<div class="main">
+  <div class="hero">
+    <h1>Blur backgrounds.<br><span>Focus on the subject.</span></h1>
+    <p>Upload a photo and blur the background with AI-powered subject detection. Adjust blur intensity for the perfect portrait effect.</p>
+  </div>
+  <div class="upload-zone" id="blurZone">
+    <input type="file" id="blurFileInput" accept="image/*">
+    <div class="upload-placeholder">
+      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <h3>Drop an image here</h3>
+      <p>JPG, PNG, WebP &bull; Up to 20 MB</p>
+    </div>
+    <div class="image-display" id="blurDisplay" style="display:none">
+      <div class="comparison" id="blurComparison">
+        <div class="after-wrap"><img id="blurAfterImg" alt="Result"></div>
+        <div class="before-wrap"><img id="blurBeforeImg" alt="Original"></div>
+        <div class="comparison-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/></svg></div>
+        <span class="label label-l">Original</span>
+        <span class="label label-r">Result</span>
+        <div class="image-loader" id="blurLoader"><div class="spinner"></div><p>Processing blur…</p></div>
+      </div>
+      <div class="rrow" style="margin-top:14px">
+        <label>Blur Radius</label>
+        <input type="range" id="blurRadiusSlider" min="1" max="30" value="10">
+        <span class="rval" id="blurRadiusVal">10</span>
+      </div>
+      <div class="actions" style="margin-top:6px">
+        <button class="btn btn-outline" id="blurNewBtn">New Image</button>
+        <button class="btn btn-primary" id="applyBlurBtn">Apply Blur</button>
+        <button class="btn btn-success" id="downloadBlurBtn">Download</button>
+      </div>
+      <div class="share-row" id="blurShare" style="display:none"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ─── Page: Selfie Filter ─── -->
+<div class="page" id="page-selfie-filter">
+<div class="main">
+  <div class="hero">
+    <h1>Selfie filters.<br><span>Transform your look.</span></h1>
+    <p>Upload a selfie and apply AI-enhanced filter presets. Get the perfect look for social media, all for free.</p>
+  </div>
+  <div class="upload-zone" id="selfieZone">
+    <input type="file" id="selfieFileInput" accept="image/*">
+    <div class="upload-placeholder">
+      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <h3>Drop an image here</h3>
+      <p>JPG, PNG, WebP &bull; Up to 20 MB</p>
+    </div>
+    <div class="image-display" id="selfieDisplay" style="display:none">
+      <div class="comparison" id="selfieComparison">
+        <div class="after-wrap"><img id="selfieAfterImg" alt="Result"></div>
+        <div class="before-wrap"><img id="selfieBeforeImg" alt="Original"></div>
+        <div class="comparison-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/></svg></div>
+        <span class="label label-l">Original</span>
+        <span class="label label-r">Result</span>
+        <div class="image-loader" id="selfieLoader"><div class="spinner"></div><p>Applying filter…</p></div>
+      </div>
+      <div class="info-row" id="selfieInfo"></div>
+      <div id="selfiePresets"></div>
+      <div class="loading" id="selfieLoading" style="margin-top:10px"><div class="spinner"></div><span>Applying filter…</span></div>
+      <div class="actions" style="margin-top:6px">
+        <button class="btn btn-outline" id="selfieNewBtn">New Image</button>
+        <button class="btn btn-success" id="downloadSelfieBtn">Download</button>
+      </div>
+      <div class="share-row" id="selfieShare" style="display:none"></div>
     </div>
   </div>
 </div>
@@ -1010,31 +1087,39 @@ const SHARE_PLATFORMS = [
 const PAGE_DESCS = {
   'remove-background': 'Remove backgrounds from photos instantly using AI. Free online tool — no signup required.',
   'resize-image': 'Resize images to any dimensions for free. Maintain aspect ratio, choose presets, download in one click.',
-  'image-filter': 'Apply filters to your images: brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation.'
+  'image-filter': 'Apply filters to your images: brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation.',
+  'background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create portrait mode effects instantly.',
+  'selfie-filter': 'Apply stunning filter presets to your selfies: glow, vintage, B&W, vivid, and more.'
 };
 
 const BASE = window.location.origin;
 const PAGE_TITLES = {
   'remove-background': 'Free AI Background Remover — Remove Image Background Online | ImageTools',
   'resize-image': 'Free Image Resizer — Resize Photos Online Instantly | ImageTools',
-  'image-filter': 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools'
+  'image-filter': 'Free Image Filter Editor — Apply Photo Effects Online | ImageTools',
+  'background-blur': 'Free Background Blur Tool — Blur Photo Background Online | ImageTools',
+  'selfie-filter': 'Free Selfie Filter Editor — Apply Photo Presets Online | ImageTools'
 };
 const PAGE_DESCS_LONG = {
   'remove-background': 'Remove backgrounds from photos instantly using AI. Free online background removal tool with image composition, text overlay, gradients, and more. No signup required.',
   'resize-image': 'Resize images online for free. Change photo dimensions, maintain aspect ratio, use preset sizes. Fast image resizer tool for social media, web, and print.',
-  'image-filter': 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.'
+  'image-filter': 'Apply stunning filters to your images online for free. Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue rotation. Download with one click.',
+  'background-blur': 'Blur photo backgrounds with AI-powered subject detection. Create beautiful portrait mode effects online for free. Adjustable blur intensity, instant download. No signup required.',
+  'selfie-filter': 'Apply stunning selfie filter presets to your photos online for free. Glow, vintage, B&W, vivid and more. One-click download, no signup required.'
 };
 const PAGE_KEYWORDS = {
   'remove-background': 'background remover, remove background from image, AI background removal, photo background eraser, transparent background maker',
   'resize-image': 'image resizer, resize photo online, image dimension changer, photo scaler, picture resizer tool',
-  'image-filter': 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online'
+  'image-filter': 'image filter editor, photo effects, image brightness adjuster, photo contrast, image filter online',
+  'background-blur': 'background blur, blur photo background, portrait mode, AI subject detection, blur background online',
+  'selfie-filter': 'selfie filter, photo filter presets, glow filter, vintage photo, photo effects online, photo editor'
 };
 
 function pageUrl(page) { return BASE + '/' + page; }
 function shareText(pageId) {
   const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background';
-  const titles = {'remove-background':'AI Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter Editor'};
-  return encodeURIComponent('Remove backgrounds, resize, and apply filters — all free! Check out ' + titles[p] + ' on ImageTools');
+  const titles = {'remove-background':'AI Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter Editor','background-blur':'Background Blur','selfie-filter':'Selfie Filter'};
+  return encodeURIComponent('Remove backgrounds, blur, resize, and apply filters — all free! Check out ' + titles[p] + ' on ImageTools');
 }
 function shareUrl(pageId) { return encodeURIComponent(pageUrl(pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'remove-background')); }
 
@@ -1081,7 +1166,7 @@ function switchPage(page, push) {
   // Update URL with pushState (skip on popstate to avoid loop)
   if (push !== false && window.location.pathname !== '/' + page) history.pushState({page}, '', '/' + page);
   // Meta tags
-  const name = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter'}[page] || 'ImageTools';
+  const name = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter'}[page] || 'ImageTools';
   document.title = PAGE_TITLES[page] || 'ImageTools — Free Online Image Editor';
   const setMeta = (sel, val) => { const el = document.querySelector(sel); if (el) el.content = val; };
   setMeta('meta[name="description"]', PAGE_DESCS_LONG[page]);
@@ -1106,7 +1191,7 @@ function switchPage(page, push) {
   // OG image with tool-specific text
   const ogImg = document.querySelector('meta[property="og:image"]');
   if (ogImg) {
-    const label = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter'}[page] || 'ImageTools';
+    const label = {'remove-background':'Background Remover','resize-image':'Image Resizer','image-filter':'Image Filter','background-blur':'Background Blur','selfie-filter':'Selfie Filter'}[page] || 'ImageTools';
     ogImg.content = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"><rect fill="#05050a" width="1200" height="630"/><text x="600" y="280" font-family="Inter,sans-serif" font-size="64" font-weight="800" fill="#a29bfe" text-anchor="middle">ImageTools</text><text x="600" y="360" font-family="Inter,sans-serif" font-size="32" fill="#6c5ce7" text-anchor="middle">${label}</text><text x="600" y="410" font-family="Inter,sans-serif" font-size="20" fill="#6b6b8a" text-anchor="middle">Free • Online • No Signup</text></svg>`);
   }
   if (page !== 'remove-background') { imageLoader.classList.remove('show'); aiRunning = false; }
@@ -1359,6 +1444,243 @@ $('downloadFilterBtn').onclick = () => {
   a.download = (filterOrigName ? filterOrigName.replace(/\.[^.]+$/,'') : 'image') + '-' + String(Math.floor(10000 + Math.random()*90000)) + '.png';
   a.click();
   buildShareRow('filterShare', 'image-filter');
+};
+
+// ─── Background Blur Page ───
+let blurOrigImg = null, blurOrigName = '';
+$('blurFileInput').onchange = e => { if (e.target.files[0]) loadBlurImg(e.target.files[0]); };
+$('blurZone').addEventListener('dragover', e => { e.preventDefault(); $('blurZone').classList.add('dragover'); });
+$('blurZone').addEventListener('dragleave', () => $('blurZone').classList.remove('dragover'));
+$('blurZone').addEventListener('drop', e => { e.preventDefault(); $('blurZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadBlurImg(e.dataTransfer.files[0]); });
+
+function loadBlurImg(file) {
+  if (!file.type.startsWith('image/')) return toast('Please select an image','error');
+  blurOrigName = file.name;
+  const r = new FileReader();
+  r.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      blurOrigImg = img;
+      $('blurBeforeImg').src = img.src;
+      $('blurDisplay').style.display = 'flex';
+      $('blurZone').classList.add('has-result');
+      $('blurLoader').classList.add('show');
+      runBlur(10);
+    };
+    img.src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+$('blurNewBtn').onclick = () => {
+  $('blurZone').classList.remove('has-result');
+  $('blurDisplay').style.display = 'none';
+  $('blurFileInput').value = '';
+  blurOrigImg = null;
+  blurOrigName = '';
+};
+
+let blurLoadCounter = 0;
+function runBlur(radius) {
+  if (!blurOrigImg) return;
+  const tag = ++blurLoadCounter;
+  $('blurLoader').classList.add('show');
+  const canvas = document.createElement('canvas');
+  canvas.width = blurOrigImg.naturalWidth; canvas.height = blurOrigImg.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(blurOrigImg, 0, 0);
+  canvas.toBlob(blob => {
+    const fd = new FormData();
+    fd.set('image', blob, 'blur.png');
+    fd.append('blurRadius', radius);
+    fetch('/api/background-blur', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(d => {
+        if (tag !== blurLoadCounter) return;
+        $('blurLoader').classList.remove('show');
+        if (!d.url) { toast(d.e || 'Blur failed','error'); return; }
+        $('blurAfterImg').src = d.url;
+        $('blurAfterImg').onload = () => { initBlurSlider(); };
+        toast('Background blurred!','success');
+      })
+      .catch(e => { if (tag === blurLoadCounter) { $('blurLoader').classList.remove('show'); toast('Blur failed: '+e.message,'error'); } });
+  }, 'image/png');
+}
+
+let blurSliderState = null;
+function initBlurSlider() {
+  const c = $('blurComparison'), bw = c.querySelector('.before-wrap'), h = c.querySelector('.comparison-handle');
+  if (blurSliderState) {
+    document.removeEventListener('mousemove', blurSliderState.mm);
+    document.removeEventListener('mouseup', blurSliderState.mu);
+    document.removeEventListener('touchmove', blurSliderState.tm);
+    document.removeEventListener('touchend', blurSliderState.tu);
+  }
+  let drag = false;
+  function move(x) {
+    const r = c.getBoundingClientRect();
+    let p = Math.max(0, Math.min(100, ((x - r.left) / r.width) * 100));
+    bw.style.width = p + '%'; h.style.left = p + '%';
+  }
+  const mm = e => { if (drag) move(e.clientX); };
+  const mu = () => { drag = false; };
+  const tm = e => { if (drag) move(e.touches[0].clientX); };
+  const tu = () => { drag = false; };
+  h.addEventListener('mousedown', () => drag = true);
+  h.addEventListener('touchstart', () => drag = true, {passive:true});
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+  document.addEventListener('touchmove', tm, {passive:true});
+  document.addEventListener('touchend', tu);
+  c.addEventListener('click', e => move(e.clientX));
+  blurSliderState = { mm, mu, tm, tu };
+}
+
+$('blurRadiusSlider').addEventListener('input', () => {
+  $('blurRadiusVal').textContent = $('blurRadiusSlider').value;
+});
+$('applyBlurBtn').onclick = () => {
+  if (!blurOrigImg) return;
+  $('blurLoader').classList.add('show');
+  runBlur(+$('blurRadiusSlider').value);
+};
+$('downloadBlurBtn').onclick = () => {
+  const a = document.createElement('a');
+  a.href = $('blurAfterImg').src;
+  a.download = (blurOrigName ? blurOrigName.replace(/\.[^.]+$/,'') : 'image') + '-blurred.png';
+  a.click();
+  buildShareRow('blurShare', 'background-blur');
+};
+
+// ─── Selfie Filter Page ───
+const SELFIE_PRESETS = [
+  {id:'glow',label:'Glow',icon:'✨',desc:'Bright & soft glow'},
+  {id:'warm',label:'Warm',icon:'🌅',desc:'Warm golden tones'},
+  {id:'vintage',label:'Vintage',icon:'📷',desc:'Classic sepia look'},
+  {id:'bw-classic',label:'B&W',icon:'⚫',desc:'High contrast mono'},
+  {id:'soft-glam',label:'Soft',icon:'🌸',desc:'Soft & dreamy'},
+  {id:'vivid',label:'Vivid',icon:'🌈',desc:'Bold & vibrant'},
+  {id:'cool',label:'Cool',icon:'❄️',desc:'Cool blue tones'},
+  {id:'dramatic',label:'Dramatic',icon:'🎬',desc:'Dark & moody'}
+];
+let selfieOrigImg = null, selfieOrigName = '', selfiePresetActive = null;
+$('selfieFileInput').onchange = e => { if (e.target.files[0]) loadSelfieImg(e.target.files[0]); };
+$('selfieZone').addEventListener('dragover', e => { e.preventDefault(); $('selfieZone').classList.add('dragover'); });
+$('selfieZone').addEventListener('dragleave', () => $('selfieZone').classList.remove('dragover'));
+$('selfieZone').addEventListener('drop', e => { e.preventDefault(); $('selfieZone').classList.remove('dragover'); if (e.dataTransfer.files[0]) loadSelfieImg(e.dataTransfer.files[0]); });
+
+function loadSelfieImg(file) {
+  if (!file.type.startsWith('image/')) return toast('Please select an image','error');
+  selfieOrigName = file.name;
+  const r = new FileReader();
+  r.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      selfieOrigImg = img;
+      $('selfieBeforeImg').src = img.src;
+      $('selfieDisplay').style.display = 'flex';
+      $('selfieZone').classList.add('has-result');
+      $('selfieInfo').innerHTML = `<span>${img.naturalWidth}×${img.naturalHeight}px</span>`;
+      buildSelfiePresets();
+      // Auto-apply first preset
+      applySelfiePreset(SELFIE_PRESETS[0].id);
+    };
+    img.src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+$('selfieNewBtn').onclick = () => {
+  $('selfieZone').classList.remove('has-result');
+  $('selfieDisplay').style.display = 'none';
+  $('selfieFileInput').value = '';
+  selfieOrigImg = null; selfieOrigName = ''; selfiePresetActive = null;
+};
+
+function buildSelfiePresets() {
+  const c = $('selfiePresets');
+  c.innerHTML = '';
+  c.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px';
+  SELFIE_PRESETS.forEach(p => {
+    const b = document.createElement('button');
+    b.className = 'btn';
+    b.dataset.preset = p.id;
+    b.innerHTML = `<div style="font-size:20px;margin-bottom:2px">${p.icon}</div><div style="font-size:12px;font-weight:600">${p.label}</div><div style="font-size:10px;color:var(--text-muted);font-weight:400">${p.desc}</div>`;
+    b.style.cssText = 'flex-direction:column;padding:10px 6px;height:auto;min-height:70px;text-align:center';
+    b.onclick = () => applySelfiePreset(p.id);
+    c.appendChild(b);
+  });
+  c.querySelector('button').classList.add('btn-primary');
+}
+
+let selfieLoadCounter = 0;
+function applySelfiePreset(id) {
+  if (!selfieOrigImg) return;
+  selfiePresetActive = id;
+  const tag = ++selfieLoadCounter;
+  // Highlight active
+  document.querySelectorAll('#selfiePresets button').forEach(b => {
+    b.className = 'btn';
+    if (b.dataset.preset === id) b.classList.add('btn-primary');
+  });
+  const ld = $('selfieLoading'); ld.classList.add('show');
+  const c = document.createElement('canvas');
+  c.width = selfieOrigImg.naturalWidth; c.height = selfieOrigImg.naturalHeight;
+  c.getContext('2d').drawImage(selfieOrigImg, 0, 0);
+  c.toBlob(blob => {
+    const fd = new FormData();
+    fd.append('image', blob, 'selfie.png');
+    fd.append('preset', id);
+    fetch('/api/selfie-filter', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(d => {
+        if (tag !== selfieLoadCounter) return;
+        ld.classList.remove('show');
+        if (!d.url) { toast(d.e || 'Filter failed','error'); return; }
+        $('selfieAfterImg').src = d.url;
+        $('selfieAfterImg').onload = () => { initSelfieSlider(); };
+        toast(SELFIE_PRESETS.find(p => p.id === id)?.label + ' filter applied!','success');
+      })
+      .catch(e => { if (tag === selfieLoadCounter) { ld.classList.remove('show'); toast('Filter failed: '+e.message,'error'); } });
+  }, 'image/png');
+}
+
+let selfieSliderState = null;
+function initSelfieSlider() {
+  const c = $('selfieComparison'), bw = c.querySelector('.before-wrap'), h = c.querySelector('.comparison-handle');
+  if (selfieSliderState) {
+    document.removeEventListener('mousemove', selfieSliderState.mm);
+    document.removeEventListener('mouseup', selfieSliderState.mu);
+    document.removeEventListener('touchmove', selfieSliderState.tm);
+    document.removeEventListener('touchend', selfieSliderState.tu);
+  }
+  let drag = false;
+  function move(x) {
+    const r = c.getBoundingClientRect();
+    let p = Math.max(0, Math.min(100, ((x - r.left) / r.width) * 100));
+    bw.style.width = p + '%'; h.style.left = p + '%';
+  }
+  const mm = e => { if (drag) move(e.clientX); };
+  const mu = () => { drag = false; };
+  const tm = e => { if (drag) move(e.touches[0].clientX); };
+  const tu = () => { drag = false; };
+  h.addEventListener('mousedown', () => drag = true);
+  h.addEventListener('touchstart', () => drag = true, {passive:true});
+  document.addEventListener('mousemove', mm);
+  document.addEventListener('mouseup', mu);
+  document.addEventListener('touchmove', tm, {passive:true});
+  document.addEventListener('touchend', tu);
+  c.addEventListener('click', e => move(e.clientX));
+  selfieSliderState = { mm, mu, tm, tu };
+}
+
+$('downloadSelfieBtn').onclick = () => {
+  const a = document.createElement('a');
+  a.href = $('selfieAfterImg').src;
+  const presetLabel = SELFIE_PRESETS.find(p => p.id === selfiePresetActive)?.label || 'filter';
+  a.download = (selfieOrigName ? selfieOrigName.replace(/\.[^.]+$/,'') : 'image') + '-' + presetLabel.toLowerCase() + '.png';
+  a.click();
+  buildShareRow('selfieShare', 'selfie-filter');
 };
 
 // ─── Init header share ───
