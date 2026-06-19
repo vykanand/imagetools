@@ -338,10 +338,17 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
     <div class="image-display" id="resizeDisplay" style="display:none">
       <div class="preview-box"><img id="resizePreview" alt="Preview"><span class="empty-state" id="resizeEmpty">No image loaded</span></div>
       <div class="info-row" id="resizeInfo"></div>
-      <div class="fg"><label>Width (px)</label><input type="number" id="resizeW" min="1" max="10000"></div>
-      <div class="fg"><label>Height (px)</label><input type="number" id="resizeH" min="1" max="10000"></div>
-      <div class="fg" style="flex-direction:row;align-items:center;gap:8px;margin-bottom:10px"><input type="checkbox" id="resizeLock" checked><label style="margin:0;text-transform:none;letter-spacing:0">Maintain aspect ratio</label></div>
-      <div class="fg" style="display:flex;gap:10px;align-items:center"><label style="white-space:nowrap">Scale:</label><input type="range" id="resizePct" min="1" max="200" value="100" style="flex:1"><span id="resizePctVal" style="font-size:13px;min-width:40px">100%</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="fg"><label>Width (px)</label><input type="number" id="resizeW" min="1" max="10000"></div>
+        <div class="fg"><label>Height (px)</label><input type="number" id="resizeH" min="1" max="10000"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);cursor:pointer;white-space:nowrap"><input type="checkbox" id="resizeLock" checked style="accent-color:var(--accent)"> Lock</label>
+        <div style="flex:1;display:flex;align-items:center;gap:8px">
+          <input type="range" id="resizePxSlider" min="1" max="5000" value="100" style="flex:1">
+          <span id="resizePxVal" style="font-size:12px;color:var(--text-muted);min-width:50px;text-align:right;font-variant-numeric:tabular-nums"></span>
+        </div>
+      </div>
       <div class="resize-presets" id="resizePresets"></div>
       <div style="display:flex;gap:10px;margin-top:14px">
         <button class="btn btn-primary" id="applyResizeBtn" style="flex:1">Apply Resize</button>
@@ -993,6 +1000,11 @@ function loadResize(file) {
       $('resizeZone').classList.add('has-result');
       $('resizeW').value = img.naturalWidth;
       $('resizeH').value = img.naturalHeight;
+      const maxDim = Math.max(img.naturalWidth, img.naturalHeight);
+      const slider = $('resizePxSlider');
+      slider.min = 1; slider.max = Math.max(5000, Math.ceil(maxDim * 2 / 100) * 100);
+      slider.value = img.naturalWidth;
+      $('resizePxVal').textContent = img.naturalWidth + 'px';
       $('resizeInfo').innerHTML = `<span>Original: ${img.naturalWidth}×${img.naturalHeight}px</span>`;
       updateResizePresets();
     };
@@ -1009,14 +1021,14 @@ function updateResizePresets() {
     const b = document.createElement('button');
     b.className = 'btn btn-sm btn-outline';
     b.textContent = p.name;
-    b.onclick = () => { $('resizeW').value = p.w; $('resizeH').value = p.h; };
+    b.onclick = () => { $('resizeW').value = p.w; $('resizeH').value = p.h; const s = $('resizePxSlider'); s.value = Math.min(p.w, +s.max); $('resizePxVal').textContent = s.value + 'px'; };
     c.appendChild(b);
   });
   // Original size button
   const ob = document.createElement('button');
   ob.className = 'btn btn-sm btn-outline';
   ob.textContent = `${resizeImg.naturalWidth}×${resizeImg.naturalHeight}`;
-  ob.onclick = () => { $('resizeW').value = resizeImg.naturalWidth; $('resizeH').value = resizeImg.naturalHeight; };
+  ob.onclick = () => { $('resizeW').value = resizeImg.naturalWidth; $('resizeH').value = resizeImg.naturalHeight; const s = $('resizePxSlider'); s.value = resizeImg.naturalWidth; $('resizePxVal').textContent = s.value + 'px'; };
   c.appendChild(ob);
 }
 
@@ -1024,23 +1036,31 @@ let resizeLocked = true;
 $('resizeLock').onchange = () => { resizeLocked = $('resizeLock').checked; };
 
 $('resizeW').oninput = () => {
+  const w = +$('resizeW').value;
+  if (w > 0) { $('resizePxSlider').value = w; $('resizePxVal').textContent = w + 'px'; }
   if (resizeLocked && resizeImg) {
     const r = resizeImg.naturalHeight / resizeImg.naturalWidth;
-    $('resizeH').value = Math.round($('resizeW').value * r);
+    $('resizeH').value = Math.round(w * r);
   }
 };
 $('resizeH').oninput = () => {
   if (resizeLocked && resizeImg) {
     const r = resizeImg.naturalWidth / resizeImg.naturalHeight;
-    $('resizeW').value = Math.round($('resizeH').value * r);
+    const w = Math.round($('resizeH').value * r);
+    $('resizeW').value = w;
+    $('resizePxSlider').value = Math.min(w, +$('resizePxSlider').max);
+    $('resizePxVal').textContent = $('resizePxSlider').value + 'px';
   }
 };
-$('resizePct').oninput = () => {
-  const pct = +$('resizePct').value;
-  $('resizePctVal').textContent = pct + '%';
+$('resizePxSlider').oninput = () => {
+  const v = +$('resizePxSlider').value;
+  $('resizePxVal').textContent = v + 'px';
   if (resizeImg) {
-    $('resizeW').value = Math.round(resizeImg.naturalWidth * pct / 100);
-    $('resizeH').value = Math.round(resizeImg.naturalHeight * pct / 100);
+    $('resizeW').value = v;
+    if (resizeLocked) {
+      const r = resizeImg.naturalHeight / resizeImg.naturalWidth;
+      $('resizeH').value = Math.round(v * r);
+    }
   }
 };
 
@@ -1057,13 +1077,21 @@ $('applyResizeBtn').onclick = () => {
     $('resizeInfo').innerHTML = `<span>Original: ${resizeImg.naturalWidth}×${resizeImg.naturalHeight}px</span><span>Resized: ${w}×${h}px</span>`;
   };
   resizeImg.onload = null;
-  resizeImg = new Image();
-  resizeImg.src = c.toDataURL('image/png');
+  const newImg = new Image();
+  newImg.onload = () => {
+    resizeImg = newImg;
+    const maxDim = Math.max(w, h);
+    const slider = $('resizePxSlider');
+    slider.min = 1; slider.max = Math.max(5000, Math.ceil(maxDim * 2 / 100) * 100);
+    slider.value = w;
+    $('resizePxVal').textContent = w + 'px';
+  };
+  newImg.src = c.toDataURL('image/png');
   toast(`Resized to ${w}×${h}`, 'success');
 };
 
 $('downloadResizeBtn').onclick = () => {
-  if (!$('resizePreview').src || $('resizePreview').src === $('resizeEmpty').src) return;
+  if (!resizeImg) return;
   const a = document.createElement('a');
   a.href = $('resizePreview').src;
   a.download = (resizeOrigName ? resizeOrigName.replace(/\.[^.]+$/,'') : 'image') + '-resized.png';
