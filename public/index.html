@@ -1610,9 +1610,51 @@ function shareText(pageId) {
 }
 function shareUrl(pageId) { return encodeURIComponent(pageUrl(pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'free-remove-background')); }
 
-function shareTo(platform, pageId) {
+function getResultImageUrl(pageId) {
+  const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'free-remove-background';
+  if (p === 'free-remove-background') {
+    if (S.resultId) return '/api/output/' + S.resultId + '.png';
+    const ai = $('afterImg');
+    if (ai && ai.src && ai.src.startsWith('data:')) return ai.src;
+  }
+  if (p === 'free-resize-image') { const rp = $('resizePreview'); if (rp && rp.src) return rp.src; }
+  if (p === 'free-image-filter') {
+    if (!filterImg) return null;
+    const c = document.createElement('canvas');
+    c.width = filterImg.naturalWidth;
+    c.height = filterImg.naturalHeight;
+    const cx = c.getContext('2d');
+    cx.filter = getFilterCss();
+    cx.drawImage(filterImg, 0, 0);
+    return c.toDataURL('image/png');
+  }
+  if (p === 'free-background-blur') { const bi = $('blurAfterImg'); if (bi && bi.src && bi.src !== $('blurBeforeImg')?.src) return bi.src; }
+  if (p === 'free-selfie-filter') { const si = $('selfieAfterImg'); if (si && si.src && si.src !== $('selfieBeforeImg')?.src) return si.src; }
+  if (p === 'free-online-camera') return cameraCaptured || null;
+  return null;
+}
+
+function dataUrlToBlob(d) { const p = d.split(','), m = p[0].match(/:(.*?);/)[1], b = atob(p[1]), a = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return new Blob([a], {type:m}); }
+
+async function shareTo(platform, pageId) {
   const p = pageId || document.querySelector('#pageNav a.active')?.dataset?.page || 'free-remove-background';
   const txt = shareText(p), url = shareUrl(p);
+  const imgUrl = getResultImageUrl(p);
+  const fullText = decodeURIComponent(txt) + ' ' + decodeURIComponent(url);
+
+  // Try Web Share API with image file
+  if (imgUrl && navigator.share && navigator.canShare) {
+    try {
+      const blob = imgUrl.startsWith('data:') ? dataUrlToBlob(imgUrl) : await fetch(imgUrl).then(r => r.blob());
+      const file = new File([blob], 'imagefree.' + (blob.type==='image/png'?'png':'jpg'), {type:blob.type});
+      if (navigator.canShare({files:[file], text:fullText})) {
+        await navigator.share({files:[file], text:fullText});
+        return;
+      }
+    } catch (_) {}
+  }
+
+  // Platform fallbacks
   const links = {
     whatsapp: `https://wa.me/?text=${txt}%20${url}`,
     instagram: null,
@@ -1622,7 +1664,13 @@ function shareTo(platform, pageId) {
   const link = links[platform];
   if (link) window.open(link, '_blank', 'width=600,height=500');
   else if (platform === 'instagram') {
-    navigator.clipboard.writeText(decodeURIComponent(txt) + ' ' + decodeURIComponent(url)).then(() => toast('Link copied! Paste on Instagram', 'success'));
+    if (imgUrl) {
+      try {
+        const blob = imgUrl.startsWith('data:') ? dataUrlToBlob(imgUrl) : await fetch(imgUrl).then(r => r.blob());
+        await navigator.clipboard.write([new ClipboardItem({[blob.type]:blob})]);
+      } catch (_) {}
+    }
+    navigator.clipboard.writeText(fullText).then(() => toast('Image & link copied! Paste on Instagram', 'success'));
     window.open('https://www.instagram.com/', '_blank');
   }
 }
