@@ -175,6 +175,9 @@ canvas{display:none}
 .modal .btn{width:100%;margin-top:4px}
 .modal .switch{text-align:center;margin-top:14px;font-size:13px;color:var(--text-muted)}
 .modal .switch a{color:var(--accent);cursor:pointer;font-weight:600}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;border-radius:4px;background:var(--border);outline:none;cursor:pointer;margin:4px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);border:2px solid #fff;cursor:pointer;transition:var(--transition);box-shadow:0 1px 6px rgba(0,0,0,.3)}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 .modal .error{color:var(--error);font-size:13px;display:none;margin-top:8px}
 .user{display:flex;align-items:center;gap:8px}
 .user .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-glow));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
@@ -229,6 +232,11 @@ canvas{display:none}
         <div class="image-loader" id="imageLoader"><div class="spinner"></div><p>Removing background…</p></div>
       </div>
 
+      <div class="compose-preview" id="composePreview" style="display:none;margin-top:12px;position:relative">
+        <canvas id="previewCanvas" style="width:100%;border-radius:var(--radius);display:block;cursor:default;background:var(--card)"></canvas>
+        <input type="color" id="canvasColorTrigger" style="position:absolute;width:0;height:0;padding:0;border:0;visibility:hidden" tabindex="-1">
+      </div>
+
       <div class="actions">
         <button class="btn btn-outline" id="newBtn">New Image</button>
         <button class="btn btn-primary" id="aiRemoveBtn">
@@ -271,7 +279,8 @@ canvas{display:none}
           </div>
           <div class="fg"><label>Overlay Text</label><input type="text" id="overlayText" placeholder="Your text here…"></div>
           <div class="fg"><label>Text Color</label><div class="color-row"><input type="color" id="textColor" value="#ffffff"><input type="text" id="textColorHex" value="#ffffff" spellcheck="false"></div></div>
-          <div class="fg"><label>Text Size</label><select id="textSize"><option value="32">Small</option><option value="48" selected>Medium</option><option value="64">Large</option><option value="96">X-Large</option></select></div>
+          <div class="fg"><label>Text Size: <span id="textSizeVal">48</span>px</label><input type="range" id="textSizeSlider" min="8" max="300" value="48" style="width:100%"></div>
+          <div class="fg"><label>Rotation: <span id="textRotVal">0</span>°</label><input type="range" id="textRotSlider" min="0" max="360" value="0" style="width:100%"></div>
           <button class="btn btn-primary" id="applyBgBtn" style="width:100%">Apply Background</button>
           <div class="loading" id="composeLoading"><div class="spinner"></div><span>Composing…</span></div>
           <div class="auth-banner" id="authBanner"><a id="authBannerLink">Sign up</a> to unlock background composition</div>
@@ -486,7 +495,10 @@ $('addGradColor').onclick = () => {
   row.innerHTML = '<input type="color" class="gradColor" value="hsl('+hue+',80%,60%)"><input type="text" class="gradHex" value="" spellcheck="false"><button class="rm" onclick="this.parentElement.remove()">&times;</button>';
   const pk = row.querySelector('.gradColor'), tx = row.querySelector('.gradHex');
   tx.value = pk.value;
-  pk.addEventListener('input', () => tx.value = pk.value);
+  pk.addEventListener('input', () => {
+    tx.value = pk.value; cp.gradColors = [...document.querySelectorAll('.gradColor')].map(c => c.value);
+    cp.bgType = 'gradient'; if (cpLoaded) renderCompose();
+  });
   tx.addEventListener('input', () => { if (/^#[0-9a-f]{6}$/i.test(tx.value)) pk.value = tx.value; });
   c.appendChild(row);
 };
@@ -505,7 +517,7 @@ $('applyBgBtn').onclick = async () => {
     body.gradientDirection = $('gradDirection').value;
   } else if (bgType === 'url') body.bgUrl = $('bgUrl').value;
   const txt = $('overlayText').value.trim();
-  if (txt) { body.text = txt; body.textColor = $('textColor').value; body.textSize = $('textSize').value; }
+  if (txt) { body.text = txt; body.textColor = $('textColor').value; body.textSize = $('textSizeSlider').value; body.textRotation = cp.textRot; body.textX = Math.round(cp.tx - cp.w/2); body.textY = Math.round(cp.ty - cp.h/2); }
   try {
     const res = await fetch('/api/compose', {method:'POST',headers:{'Authorization':'Bearer '+S.token,'Content-Type':'application/json'},body:JSON.stringify(body)});
     const d = await res.json();
@@ -568,6 +580,290 @@ function showAuthError(m) { $('authError').textContent=m; $('authError').style.d
 function logout() { S.token=null; S.user=null; localStorage.removeItem('t'); localStorage.removeItem('u'); renderHeader(); toast('Logged out','success'); }
 
 function toast(msg, type) { const t=$('toast'); t.textContent=msg; t.className='toast '+type+' show'; setTimeout(()=>t.classList.remove('show'),3000); }
+
+// ─── Interactive Compose Preview ───
+const cp = {
+  fg: null, bg: null, w: 0, h: 0,
+  text: '', textColor: '#ffffff', textSize: 48, textRot: 0,
+  tx: 0, ty: 0, // text center position
+  dragging: false, dragOffX: 0, dragOffY: 0,
+  bgType: 'solid', bgColor: '#6c5ce7',
+  gradColors: ['#ff7e5f','#feb47b'], gradDir: 'right',
+  bgUrl: '',
+  dirty: false, active: false
+};
+let pc, pctx, pcLoaded = false;
+
+function loadComposePreview() {
+  const el = $('composePreview'), c = $('previewCanvas');
+  if (!S.resultId) { el.style.display='none'; return; }
+  pc = c; pctx = c.getContext('2d');
+  cp.active = true;
+  cp.bgType = document.querySelector('.bg-tab.active')?.dataset?.tab || 'solid';
+  // Load foreground
+  const fg = new Image();
+  fg.crossOrigin = 'anonymous';
+  fg.onload = () => {
+    cp.fg = fg; cp.w = fg.naturalWidth; cp.h = fg.naturalHeight;
+    c.width = fg.naturalWidth; c.height = fg.naturalHeight;
+    cp.tx = fg.naturalWidth/2; cp.ty = fg.naturalHeight/2;
+    cpLoaded = true;
+    renderCompose();
+  };
+  fg.onerror = () => { cpLoaded = false; };
+  fg.src = '/api/output/'+S.resultId+'.png';
+  // Load URL bg if needed
+  loadUrlBg();
+  el.style.display = 'block';
+}
+
+function loadUrlBg() {
+  const url = $('bgUrl').value.trim();
+  if (!url) { cp.bg = null; return; }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => { cp.bg = img; if (cpLoaded) renderCompose(); };
+  img.onerror = () => {};
+  img.src = url;
+}
+
+function renderCompose() {
+  if (!cpLoaded || !cp.fg) return;
+  const ctx = pctx, w = cp.w, h = cp.h;
+  ctx.clearRect(0,0,w,h);
+
+  // Background
+  if (cp.bgType === 'solid') {
+    ctx.fillStyle = cp.bgColor; ctx.fillRect(0,0,w,h);
+  } else if (cp.bgType === 'gradient') {
+    const x2 = cp.gradDir==='right'?w:0, y2 = cp.gradDir==='top'?h:cp.gradDir==='diagonal'?h:0;
+    const grad = ctx.createLinearGradient(0,0,x2,y2);
+    cp.gradColors.forEach((c,i) => grad.addColorStop(i/(cp.gradColors.length-1||1),c));
+    ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+  } else if (cp.bgType === 'url' && cp.bg) {
+    ctx.drawImage(cp.bg,0,0,w,h);
+  }
+
+  // Foreground
+  ctx.drawImage(cp.fg,0,0,w,h);
+
+  // Text
+  if (cp.text.trim()) {
+    ctx.save();
+    ctx.translate(cp.tx, cp.ty);
+    ctx.rotate(cp.textRot*Math.PI/180);
+
+    const lines = cp.text.split('\n');
+    const lh = cp.textSize*1.4;
+    ctx.font = 'bold '+cp.textSize+'px Inter,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+
+    let mw = 0;
+    lines.forEach(l => { const m = ctx.measureText(l).width; if (m>mw) mw=m; });
+    const bbW = mw+20, bbH = lines.length*lh+20;
+    const bbX = -bbW/2, bbY = -bbH/2;
+
+    // Bounding box
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.lineWidth = 1;
+    ctx.setLineDash([5,5]); ctx.strokeRect(bbX,bbY,bbW,bbH); ctx.setLineDash([]);
+
+    // Text fill
+    lines.forEach((l,i) => ctx.fillText(l,0,(i-(lines.length-1)/2)*lh));
+
+    // Color badge (top-right corner)
+    const badgeR = 10;
+    const bx = bbX+bbW+12, by = bbY+12;
+    ctx.beginPath(); ctx.arc(bx,by,badgeR,0,Math.PI*2);
+    ctx.fillStyle = cp.textColor; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth=2.5; ctx.stroke();
+
+    // Resize handle (bottom-right corner)
+    const hs = 8;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(bbX+bbW-hs,bbY+bbH-hs,hs*2,hs*2);
+    ctx.strokeStyle = '#6c5ce7'; ctx.lineWidth=2;
+    ctx.strokeRect(bbX+bbW-hs,bbY+bbH-hs,hs*2,hs*2);
+
+    // Rotation handle (top-center)
+    ctx.beginPath();
+    ctx.arc(0, bbY-14, 7, 0, Math.PI*2);
+    ctx.fillStyle = '#6c5ce7'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth=2; ctx.stroke();
+    // Line from center to rotation handle
+    ctx.beginPath(); ctx.moveTo(0,bbY); ctx.lineTo(0,bbY-7);
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth=1; ctx.stroke();
+
+    ctx.restore();
+  }
+}
+
+// ─── Canvas interactions ───
+let cpMode = ''; // '', 'drag', 'resize', 'rotate', 'color'
+let cpDist0 = 0, cpSize0 = 0;
+
+function getBb() {
+  const lines = cp.text.split('\n');
+  const lh = cp.textSize*1.4;
+  pctx.font = 'bold '+cp.textSize+'px Inter,sans-serif';
+  let mw = 0;
+  lines.forEach(l => { const m = pctx.measureText(l).width; if (m>mw) mw=m; });
+  return { bbW: mw+20, bbH: lines.length*lh+20, lh };
+}
+
+function localToWorld(lx, ly) {
+  const rot = cp.textRot*Math.PI/180;
+  const cos = Math.cos(rot), sin = Math.sin(rot);
+  return { x: cp.tx + lx*cos - ly*sin, y: cp.ty + lx*sin + ly*cos };
+}
+function worldToLocal(mx, my) {
+  const dx = mx-cp.tx, dy = my-cp.ty;
+  const rot = -cp.textRot*Math.PI/180;
+  const cos = Math.cos(rot), sin = Math.sin(rot);
+  return { x: dx*cos - dy*sin, y: dx*sin + dy*cos };
+}
+function dist(x1,y1,x2,y2) { return Math.hypot(x1-x2,y1-y2); }
+
+$('previewCanvas').addEventListener('mousedown', e => {
+  if (!cpLoaded || !cp.text.trim()) return;
+  const r = pc.getBoundingClientRect();
+  const mx = (e.clientX-r.left)*(cp.w/r.width);
+  const my = (e.clientY-r.top)*(cp.h/r.height);
+  const { bbW, bbH } = getBb();
+  const local = worldToLocal(mx, my);
+
+  // Color badge at (bbW/2+12, -bbH/2+12) in local
+  if (dist(local.x, local.y, bbW/2+12, -bbH/2+12) < 16) {
+    const ct = $('canvasColorTrigger');
+    ct.value = cp.textColor;
+    ct.oninput = () => { cp.textColor = ct.value; $('textColor').value = ct.value; $('textColorHex').value = ct.value; renderCompose(); };
+    ct.click(); return;
+  }
+  // Rotation handle at (0, -bbH/2-14) in local
+  if (dist(local.x, local.y, 0, -bbH/2-14) < 14) { cpMode = 'rotate'; return; }
+  // Resize handle center at (bbW/2, bbH/2) in local
+  if (dist(local.x, local.y, bbW/2, bbH/2) < 16) {
+    cpMode = 'resize';
+    cpDist0 = dist(local.x, local.y, 0, 0);
+    cpSize0 = cp.textSize;
+    return;
+  }
+  // Text body
+  if (local.x >= -bbW/2 && local.x <= bbW/2 && local.y >= -bbH/2 && local.y <= bbH/2) {
+    cpMode = 'drag';
+    cp.dragOffX = mx - cp.tx;
+    cp.dragOffY = my - cp.ty;
+  }
+});
+
+$('previewCanvas').addEventListener('mousemove', e => {
+  const r = pc.getBoundingClientRect();
+  const mx = (e.clientX-r.left)*(cp.w/r.width);
+  const my = (e.clientY-r.top)*(cp.h/r.height);
+
+  // Cursor hints when not dragging
+  if (!cpMode && cpLoaded && cp.text.trim()) {
+    const { bbW, bbH } = getBb();
+    const local = worldToLocal(mx, my);
+    if (dist(local.x, local.y, bbW/2+12, -bbH/2+12) < 16) pc.style.cursor = 'pointer';
+    else if (dist(local.x, local.y, 0, -bbH/2-14) < 14) pc.style.cursor = 'grab';
+    else if (dist(local.x, local.y, bbW/2, bbH/2) < 16) pc.style.cursor = 'nwse-resize';
+    else if (local.x >= -bbW/2 && local.x <= bbW/2 && local.y >= -bbH/2 && local.y <= bbH/2) pc.style.cursor = 'move';
+    else pc.style.cursor = 'default';
+    return;
+  }
+
+  if (!cpMode || !cpLoaded) return;
+  if (cpMode === 'drag') {
+    cp.tx = mx - cp.dragOffX; cp.ty = my - cp.dragOffY;
+    renderCompose();
+  } else if (cpMode === 'resize') {
+    const loc = worldToLocal(mx, my);
+    const d = dist(loc.x, loc.y, 0, 0);
+    const ratio = d / cpDist0;
+    const s = Math.max(8, Math.min(300, Math.round(cpSize0 * ratio)));
+    cp.textSize = s; $('textSizeSlider').value = s; $('textSizeVal').textContent = s;
+    renderCompose();
+  } else if (cpMode === 'rotate') {
+    const angle = Math.atan2(my-cp.ty, mx-cp.tx)*180/Math.PI + 90;
+    const deg = ((angle%360)+360)%360;
+    cp.textRot = Math.round(deg); $('textRotSlider').value = deg; $('textRotVal').textContent = Math.round(deg);
+    renderCompose();
+  }
+});
+
+$('previewCanvas').addEventListener('mouseup', () => { cpMode = ''; });
+$('previewCanvas').addEventListener('mouseleave', () => { cpMode = ''; });
+
+// ─── Slider handlers ───
+$('textSizeSlider').addEventListener('input', () => {
+  cp.textSize = +$('textSizeSlider').value;
+  $('textSizeVal').textContent = cp.textSize;
+  if (cpLoaded) renderCompose();
+});
+$('textRotSlider').addEventListener('input', () => {
+  cp.textRot = +$('textRotSlider').value;
+  $('textRotVal').textContent = Math.round(cp.textRot);
+  if (cpLoaded) renderCompose();
+});
+$('overlayText').addEventListener('input', () => {
+  cp.text = $('overlayText').value;
+  if (cpLoaded) renderCompose();
+});
+$('textColor').addEventListener('input', () => {
+  cp.textColor = $('textColor').value;
+  if (cpLoaded) renderCompose();
+});
+$('textColorHex').addEventListener('input', () => {
+  if (/^#[0-9a-f]{6}$/i.test($('textColorHex').value)) {
+    cp.textColor = $('textColorHex').value;
+    $('textColor').value = cp.textColor;
+    if (cpLoaded) renderCompose();
+  }
+});
+$('solidColor').addEventListener('input', () => {
+  cp.bgColor = $('solidColor').value; cp.bgType = 'solid';
+  if (cpLoaded) renderCompose();
+});
+document.querySelectorAll('.gradColor').forEach(el => {
+  el.addEventListener('input', () => {
+    cp.gradColors = [...document.querySelectorAll('.gradColor')].map(c => c.value);
+    cp.bgType = 'gradient';
+    if (cpLoaded) renderCompose();
+  });
+});
+$('gradDirection').addEventListener('change', () => {
+  cp.gradDir = $('gradDirection').value;
+  if (cpLoaded) renderCompose();
+});
+$('bgUrl').addEventListener('input', () => {
+  cp.bgType = 'url'; loadUrlBg();
+});
+// Tab changes trigger bg type refresh
+document.querySelectorAll('.bg-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    setTimeout(() => {
+      cp.bgType = document.querySelector('.bg-tab.active')?.dataset?.tab || 'solid';
+      if (cp.bgType === 'url') loadUrlBg();
+      if (cpLoaded) renderCompose();
+    }, 50);
+  });
+});
+
+// ─── Show/hide preview when bg section toggles ───
+$('bgToggleBtn').addEventListener('click', () => {
+  if ($('bgSectionBody').classList.contains('open')) {
+    if (S.resultId) { loadComposePreview(); }
+  } else {
+    $('composePreview').style.display = 'none';
+  }
+});
+$('bgSectionHeader').addEventListener('click', () => {
+  if ($('bgSectionBody').classList.contains('open')) {
+    if (S.resultId) { loadComposePreview(); }
+  } else {
+    $('composePreview').style.display = 'none';
+  }
+});
 
 renderHeader();
 </script>

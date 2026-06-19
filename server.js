@@ -125,7 +125,7 @@ app.post('/api/compose', auth, (req, res, next) => {
   next();
 }, async (req, res) => {
   try {
-    const { bgType, bgColor, gradientColors, gradientDirection, text, textColor, textSize, bgUrl, foregroundId } = req.body;
+    const { bgType, bgColor, gradientColors, gradientDirection, text, textColor, textSize, textRotation, textX, textY, bgUrl, foregroundId } = req.body;
     let fg;
     if (req.file) fg = await jimp.Jimp.read(req.file.path);
     else if (foregroundId) fg = await jimp.Jimp.read(path.join(OUTPUT_DIR, `${foregroundId}.png`));
@@ -190,9 +190,10 @@ app.post('/api/compose', auth, (req, res, next) => {
       }
 
       const scaled = tmp.clone().resize({ w: Math.round(maxLineW * tSize / closest + 20), h: Math.round(textH * tSize / closest + 20) });
-      const cx = Math.round((w - scaled.bitmap.width) / 2);
-      const cy = Math.round((h - scaled.bitmap.height) / 2);
-      bgImg.composite(scaled, Math.max(0, cx), Math.max(0, cy));
+      if (textRotation) scaled.rotate(parseFloat(textRotation));
+      const tcX = Math.round(w / 2 + (parseInt(textX) || 0) - scaled.bitmap.width / 2);
+      const tcY = Math.round(h / 2 + (parseInt(textY) || 0) - scaled.bitmap.height / 2);
+      bgImg.composite(scaled, Math.max(0, tcX), Math.max(0, tcY));
     }
 
     await bgImg.write(out);
