@@ -242,9 +242,8 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 .camera-viewfinder{position:relative;background:var(--card);border-radius:var(--radius);overflow:hidden;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
 .camera-viewfinder video{width:100%;height:100%;object-fit:contain;display:block;transform:scaleX(-1)}
 .camera-viewfinder video.mirror-off{transform:scaleX(1)}
-.camera-filter-overlay{position:absolute;inset:0;pointer-events:none;transition:filter .3s}
 .camera-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;position:absolute;inset:0;background:var(--card)}
-.camera-toolbar{display:flex;align-items:center;justify-content:center;gap:40px;padding:20px 0 8px}
+.camera-toolbar{display:flex;align-items:center;justify-content:center;gap:40px;padding:16px 0 8px}
 .camera-btn{width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
 .camera-btn:hover{background:var(--card-hover);border-color:var(--accent);color:var(--accent)}
 .camera-capture-wrap{position:relative;display:flex;align-items:center;justify-content:center}
@@ -258,8 +257,14 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 .camera-result-img-wrap{text-align:center;margin-top:16px}
 .camera-result-img-wrap img{max-width:100%;max-height:500px;border-radius:var(--radius);display:block;margin:0 auto}
 .camera-result-actions{display:flex;gap:12px;justify-content:center;margin-top:14px}
-.camera-filter-badge{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.6);color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;backdrop-filter:blur(4px);pointer-events:none}
-@media(max-width:640px){
+.camera-filters{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.camera-filters::-webkit-scrollbar{display:none}
+.camera-filter-item{flex:none;width:72px;cursor:pointer;text-align:center;transition:var(--transition);border-radius:var(--radius-sm);padding:4px;border:2px solid transparent}
+.camera-filter-item.active{border-color:var(--accent);background:var(--accent-bg)}
+.camera-filter-item:hover{background:var(--card-hover)}
+.camera-filter-thumb{width:64px;height:64px;border-radius:var(--radius-xs);overflow:hidden;margin:0 auto 3px;position:relative;background:var(--bg)}
+.camera-filter-thumb img,.camera-filter-thumb canvas{width:100%;height:100%;object-fit:cover;display:block}
+.camera-filter-name{font-size:10px;font-weight:600;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:640px){
   .header{padding:10px 16px}
   .hero h1{font-size:26px}
   .main{padding:20px 12px 60px}
@@ -734,13 +739,12 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 <div class="page" id="page-online-camera">
 <div class="main">
   <div class="hero">
-    <h1>Online Camera.<br><span>Capture from your webcam.</span></h1>
-    <p>Use your device camera to take photos. Apply filters, download, and share.</p>
+    <h1>Selfie Camera.<br><span>Filters & effects live.</span></h1>
+    <p>Capture selfies with powerful Instagram-style filters applied in real time.</p>
   </div>
   <div id="cameraView">
     <div class="camera-viewfinder" id="cameraViewfinder">
       <video id="cameraVideo" autoplay playsinline muted></video>
-      <div class="camera-filter-overlay" id="cameraFilterOverlay"></div>
       <div class="camera-placeholder" id="cameraPlaceholder">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="color:var(--text-dim);margin-bottom:12px"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
         <p style="color:var(--text-muted);font-size:14px">Camera access required</p>
@@ -756,10 +760,9 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
         <div class="camera-capture-wrap">
           <button class="camera-capture-btn" id="cameraCaptureBtn" title="Capture"></button>
         </div>
-        <button class="camera-btn" id="cameraFilterBtn" title="Cycle filter">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 22 7 6 21 2 21 2 17 18 3"/><line x1="16" y1="5" x2="19" y2="8"/><line x1="18" y1="3" x2="21" y2="6"/></svg>
-        </button>
+        <div style="width:48px"></div>
       </div>
+      <div class="camera-filters" id="cameraFilters"></div>
     </div>
     <div id="cameraResult" style="display:none">
       <div class="camera-result-img-wrap">
@@ -2042,64 +2045,108 @@ $('uploaderClearBtn').onclick = () => { uploaderHistory = []; localStorage.remov
 renderUploaderList();
 
 // ─── Online Camera Page ───
-let cameraStream = null, cameraFacing = 'user', cameraFilterIdx = 0;
+let cameraStream = null, cameraFacing = 'user', cameraFilterIdx = 0, cameraCaptured = null, cameraFilterPreviews = null;
 const CAMERA_FILTERS = [
-  {name:'Normal',css:''},
-  {name:'Warm',css:'sepia(30%) brightness(110%)'},
-  {name:'Cool',css:'hue-rotate(200deg) saturate(80%) brightness(105%)'},
-  {name:'Vintage',css:'sepia(60%) contrast(90%) brightness(90%)'},
-  {name:'B&W',css:'grayscale(100%) contrast(110%)'},
-  {name:'Vivid',css:'saturate(150%) contrast(110%) brightness(105%)'},
-  {name:'Soft',css:'brightness(110%) contrast(85%) blur(.4px)'},
-  {name:'Dramatic',css:'contrast(130%) brightness(90%) saturate(110%)'}
+  {name:'Normal',css:'',desc:'No filter'},
+  {name:'Clarendon',css:'brightness(110%) contrast(115%) saturate(120%)',desc:'Bright & bold'},
+  {name:'Gingham',css:'brightness(105%) contrast(90%) saturate(70%) sepia(10%)',desc:'Soft & muted'},
+  {name:'Lark',css:'brightness(115%) contrast(85%) saturate(90%) hue-rotate(10deg)',desc:'Fresh & airy'},
+  {name:'Juno',css:'brightness(105%) contrast(110%) saturate(160%)',desc:'Warm & vibrant'},
+  {name:'Reyes',css:'brightness(110%) contrast(85%) saturate(75%) sepia(20%)',desc:'Warm & faded'},
+  {name:'Slumber',css:'brightness(95%) contrast(90%) saturate(60%) hue-rotate(220deg)',desc:'Cool & dreamy'},
+  {name:'Crema',css:'brightness(105%) contrast(80%) saturate(80%) sepia(15%)',desc:'Creamy warmth'},
+  {name:'Ludwig',css:'brightness(105%) contrast(130%) saturate(90%)',desc:'Crisp & clear'},
+  {name:'Aden',css:'brightness(110%) contrast(90%) saturate(70%) sepia(20%) hue-rotate(330deg)',desc:'Warm rose'},
+  {name:'Perpetua',css:'brightness(110%) contrast(95%) saturate(80%) hue-rotate(300deg)',desc:'Cool pastel'},
+  {name:'Valencia',css:'brightness(108%) contrast(108%) saturate(80%) sepia(15%) hue-rotate(350deg)',desc:'Warm sunset'},
+  {name:'X-Pro II',css:'brightness(105%) contrast(120%) saturate(130%) sepia(30%)',desc:'Vintage film'},
+  {name:'Willow',css:'brightness(95%) contrast(95%) saturate(30%) grayscale(50%)',desc:'Moody mono'},
+  {name:'Nashville',css:'brightness(105%) contrast(80%) saturate(60%) sepia(25%) hue-rotate(340deg)',desc:'Warm vintage'},
+  {name:'Earlybird',css:'brightness(100%) contrast(90%) saturate(80%) sepia(30%) hue-rotate(350deg)',desc:'Antique tone'}
 ];
-let cameraCaptured = null;
+
+function generateFilterPreviews() {
+  const c = document.createElement('canvas');
+  c.width = 120; c.height = 120;
+  const cx = c.getContext('2d');
+  // Draw a simple face illustration for preview thumbnails
+  cx.fillStyle = '#d4a574'; cx.beginPath(); cx.arc(60,55,38,0,Math.PI*2); cx.fill(); // head
+  cx.fillStyle = '#c4956a'; cx.beginPath(); cx.arc(60,55,38,0,Math.PI); cx.fill(); // jaw shadow
+  cx.fillStyle = '#8b6b4a'; cx.beginPath(); cx.arc(60,68,18,0,Math.PI*2); cx.fill(); // mouth area
+  cx.fillStyle = '#e8c4a0'; cx.beginPath(); cx.arc(60,55,38,0,Math.PI*2); cx.fill(); // skin
+  // Eyes
+  cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(46,48,8,0,Math.PI*2); cx.fill(); cx.beginPath(); cx.arc(74,48,8,0,Math.PI*2); cx.fill();
+  cx.fillStyle = '#3d2b1f'; cx.beginPath(); cx.arc(46,48,4,0,Math.PI*2); cx.fill(); cx.beginPath(); cx.arc(74,48,4,0,Math.PI*2); cx.fill();
+  // Eyebrows
+  cx.strokeStyle = '#5c4033'; cx.lineWidth=2.5; cx.beginPath(); cx.moveTo(36,38); cx.lineTo(56,40); cx.stroke(); cx.beginPath(); cx.moveTo(84,38); cx.lineTo(64,40); cx.stroke();
+  // Nose
+  cx.fillStyle = '#c4956a'; cx.beginPath(); cx.ellipse(60,60,4,6,0,0,Math.PI*2); cx.fill();
+  // Mouth (smile)
+  cx.strokeStyle = '#b5656b'; cx.lineWidth=2.5; cx.beginPath(); cx.arc(60,65,12,0.1*Math.PI,0.9*Math.PI); cx.stroke();
+  // Hair
+  cx.fillStyle = '#3d2b1f'; cx.beginPath(); cx.arc(60,28,36,Math.PI*1.1,Math.PI*1.9); cx.fill();
+  // Shoulders
+  cx.fillStyle = '#4a6fa5'; cx.beginPath(); cx.moveTo(10,105); cx.lineTo(30,80); cx.lineTo(90,80); cx.lineTo(110,105); cx.closePath(); cx.fill();
+  // Background gradient
+  const grad = cx.createLinearGradient(0,0,120,120);
+  grad.addColorStop(0,'#667eea'); grad.addColorStop(1,'#764ba2');
+  cx.fillStyle = grad; cx.fillRect(0,0,120,20);
+  cx.fillRect(0,100,120,20);
+  // Generate filtered thumbnails
+  cameraFilterPreviews = CAMERA_FILTERS.map(f => {
+    const off = document.createElement('canvas');
+    off.width = 120; off.height = 120;
+    const ox = off.getContext('2d');
+    ox.drawImage(c, 0, 0);
+    if (f.css) { ox.filter = f.css; ox.drawImage(off, 0, 0); ox.filter = 'none'; }
+    return off.toDataURL();
+  });
+}
 
 $('cameraStartBtn').onclick = startCamera;
 
 function startCamera() {
-  if (!navigator.mediaDevices?.getUserMedia) { toast('Camera not supported in this browser','error'); return; }
+  if (!navigator.mediaDevices?.getUserMedia) { toast('Camera not supported','error'); return; }
+  if (!cameraFilterPreviews) generateFilterPreviews();
+  buildCameraFilters();
   $('cameraPlaceholder').style.display = 'none';
   $('cameraControls').style.display = '';
   const v = $('cameraVideo'), c = $('cameraCanvas');
-  c.style.display = 'none';
-  v.style.display = 'block';
+  c.style.display = 'none'; v.style.display = 'block';
   stopCamera();
   navigator.mediaDevices.getUserMedia({ video: { facingMode: cameraFacing, width: { ideal: 1280 }, height: { ideal: 720 } } })
     .then(s => {
-      cameraStream = s;
-      v.srcObject = s;
+      cameraStream = s; v.srcObject = s;
       v.onloadedmetadata = () => v.play();
-      updateFilterBadge();
     })
     .catch(() => {
-      $('cameraPlaceholder').style.display = 'flex';
-      $('cameraControls').style.display = 'none';
+      $('cameraPlaceholder').style.display = 'flex'; $('cameraControls').style.display = 'none';
       toast('Camera access denied','error');
     });
 }
 
 function stopCamera() {
-  if (cameraStream) {
-    cameraStream.getTracks().forEach(t => t.stop());
-    cameraStream = null;
-  }
+  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
   $('cameraVideo').srcObject = null;
 }
 
 function applyCameraFilter(idx) {
   cameraFilterIdx = idx;
-  const f = CAMERA_FILTERS[idx];
-  $('cameraVideo').style.filter = f.css;
-  updateFilterBadge();
-}
-function updateFilterBadge() {
-  let b = $('cameraFilterBadge');
-  if (!b) { b = document.createElement('div'); b.id = 'cameraFilterBadge'; b.className = 'camera-filter-badge'; $('cameraFilterOverlay').appendChild(b); }
-  b.textContent = CAMERA_FILTERS[cameraFilterIdx].name;
+  $('cameraVideo').style.filter = CAMERA_FILTERS[idx].css;
+  document.querySelectorAll('.camera-filter-item').forEach((el,i) => el.classList.toggle('active',i===idx));
 }
 
-$('cameraFilterBtn').onclick = () => applyCameraFilter((cameraFilterIdx + 1) % CAMERA_FILTERS.length);
+function buildCameraFilters() {
+  const c = $('cameraFilters');
+  if (c.children.length) return;
+  CAMERA_FILTERS.forEach((f,i) => {
+    const item = document.createElement('div');
+    item.className = 'camera-filter-item' + (i===0?' active':'');
+    item.innerHTML = `<div class="camera-filter-thumb"><img src="${cameraFilterPreviews[i]}" alt="${f.name}"></div><div class="camera-filter-name">${f.name}</div>`;
+    item.onclick = () => applyCameraFilter(i);
+    c.appendChild(item);
+  });
+}
 
 $('cameraFlipBtn').onclick = () => {
   cameraFacing = cameraFacing === 'user' ? 'environment' : 'user';
@@ -2110,45 +2157,35 @@ $('cameraFlipBtn').onclick = () => {
 $('cameraCaptureBtn').onclick = () => {
   if (!cameraStream) return;
   const v = $('cameraVideo'), canvas = $('cameraCanvas');
-  canvas.width = v.videoWidth || 1280;
-  canvas.height = v.videoHeight || 720;
+  canvas.width = v.videoWidth || 1280; canvas.height = v.videoHeight || 720;
   const ctx = canvas.getContext('2d');
-  // Mirror the capture if in selfie mode
   if (cameraFacing === 'user') { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
-  ctx.drawImage(v, 0, 0);
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  // Apply filter via CSS filter to canvas context
+  ctx.drawImage(v, 0, 0); ctx.setTransform(1, 0, 0, 1, 0, 0);
   const fcss = CAMERA_FILTERS[cameraFilterIdx].css;
   if (fcss) { ctx.filter = fcss; ctx.drawImage(canvas, 0, 0); ctx.filter = 'none'; }
-  // Flash effect
-  const flash = document.createElement('div');
-  flash.className = 'camera-flash';
+  // Flash
+  const flash = document.createElement('div'); flash.className = 'camera-flash';
   $('cameraViewfinder').appendChild(flash);
   setTimeout(() => flash.remove(), 200);
   // Show result
   cameraCaptured = canvas.toDataURL('image/png');
   $('cameraResultImg').src = cameraCaptured;
-  $('cameraVideo').style.display = 'none';
-  $('cameraCanvas').style.display = 'none';
-  $('cameraResult').style.display = '';
+  $('cameraVideo').style.display = 'none'; $('cameraCanvas').style.display = 'none';
+  $('cameraResult').style.display = ''; $('cameraControls').style.display = 'none';
   stopCamera();
-  $('cameraControls').style.display = 'none';
 };
 
 $('cameraRetakeBtn').onclick = () => {
-  cameraCaptured = null;
-  $('cameraResult').style.display = 'none';
+  cameraCaptured = null; $('cameraResult').style.display = 'none';
   $('cameraVideo').style.display = 'block';
-  $('cameraPlaceholder').style.display = 'none';
-  $('cameraControls').style.display = '';
+  $('cameraPlaceholder').style.display = 'none'; $('cameraControls').style.display = '';
   startCamera();
 };
 
 $('cameraDownloadBtn').onclick = () => {
   if (!cameraCaptured) return;
   const a = document.createElement('a');
-  a.href = cameraCaptured;
-  a.download = 'camera-capture-' + Date.now() + '.png';
+  a.href = cameraCaptured; a.download = 'selfie-' + CAMERA_FILTERS[cameraFilterIdx].name.toLowerCase() + '-' + Date.now() + '.png';
   a.click();
   buildShareRow('cameraShare', 'online-camera');
 };
