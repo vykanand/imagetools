@@ -1,0 +1,36 @@
+# ImageFree — Free Online Image Editing Suite
+
+> Remove backgrounds with AI, resize images, apply filters, blur backgrounds, and more. Free, no signup, works in your browser.
+
+## Docs
+- API Documentation: https://image-free.com/free-api-documentation
+- Background Removal: https://image-free.com/free-remove-background
+- Image Resizer: https://image-free.com/free-resize-image
+- Image Filters: https://image-free.com/free-image-filter
+- Background Blur: https://image-free.com/free-background-blur
+- Selfie Filters: https://image-free.com/free-selfie-filter
+- OCR Converter: https://image-free.com/free-image-to-text-ocr-converter
+- Image Uploader: https://image-free.com/free-image-uploader
+- Online Camera: https://image-free.com/free-online-camera
+
+## About
+ImageFree is a free online image editing toolkit offering AI-powered background removal, image resizing, filter effects, background blur, selfie filters, OCR text extraction, image uploading, and a webcam camera with real-time filters. All tools work in the browser with no software installation required.
+
+## Features
+- AI Background Removal — Remove image backgrounds using deep learning (silueta model). Replace with solid colors, gradients, custom images, or text overlays.
+- Image Resizer — Resize photos with preset sizes or custom dimensions. Aspect ratio lock supported. Output up to 10000×10000 pixels.
+- Image Filter Editor — Adjust brightness, contrast, saturation, grayscale, sepia, blur, and hue. One-click download.
+- Background Blur — AI subject detection with adjustable blur intensity for portrait mode effects.
+- Selfie Filter Presets — Glow, warm, vintage, B&W, soft glam, vivid, cool, dramatic presets.
+- OCR Text Extraction — Tesseract.js-powered image to text conversion in the browser.
+- Image Uploader — Drag-and-drop upload with instant shareable URLs.
+- Online Camera — Webcam capture with 16 real-time filter presets.
+- REST API — Programmatic access to all image processing features with JWT authentication.
+
+## Facts
+- All tools are free to use
+- No signup required for basic features
+- Images processed client-side or server-side with privacy
+- Supports JPG, PNG, WebP formats (max 20 MB)
+- Built with Node.js, Express, Jimp, and Python (rembg)
+- Deployed on Vercel
